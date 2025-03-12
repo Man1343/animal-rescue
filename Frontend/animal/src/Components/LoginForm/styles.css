@@ -1,0 +1,522 @@
+/*Login*/
+  
+.form-container {
+  
+  width: 420px;
+  background: rgba(17, 24, 39, 1);
+  border: 2px solid rgba(255, 255, 255, .2);
+  backdrop-filter: blur(30px);
+  box-shadow: 0 0 0px rgba(0, 0, 0, .2);
+  color: white;
+  border-radius: 20px;
+  padding: 30px 40px;
+
+}
+
+.bg {
+  display: flex;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-position: center;
+  background: url(./Screenshot_2024-01-19_090622-transformed.png)no-repeat;
+ background-size: cover;
+
+}
+
+
+.title {
+  font-size: 36px;
+  text-align: center;
+  color:White
+}
+
+
+.input-group {
+
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 30px 0;
+  color: red;
+}
+
+.input-grouup {
+
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 30px 0;
+  color: red;
+}
+.input-grouup input {
+ 
+  width: 70%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;  
+  border: 2px solid rgba(255, 255, 255, .2);
+  border-radius: 40px;
+  font-size: 16px;
+  color: white;
+  padding: 20px 45px 20px 20px;
+}
+
+.input-group input {
+ 
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;  
+  border: 2px solid rgba(255, 255, 255, .2);
+  border-radius: 40px;
+  font-size: 16px;
+  color: white;
+  padding: 20px 45px 20px 20px;
+}
+
+.input-group .icon {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: white;
+}
+
+.remember-forgot {
+  display: flex;
+  accent-color: #fff;
+  margin-right: 4px;
+  padding-left: 8px;
+  padding-bottom: 20px;
+}
+
+.rememberr-forgot {
+ 
+  accent-color: #fff;
+  margin-left: 4px;
+  padding-left: 50px;
+ 
+}
+
+
+
+
+
+
+/*Signup*/
+
+
+
+  .sign {
+    width: 100%;
+    height: 45px;
+    background: #fff;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+  .siggn {
+    width: 30%;
+    height: 40px;
+    background: green;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+  
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+
+  
+
+  .signup {
+    font-size: 14.5px;
+    text-align: center;
+    margin: 12px 0 15px;
+
+    }
+    .oho {
+      color: lightgreen;
+    }
+
+
+/*Navbar*/
+.top-navbar {
+  background-color: whitesmoke;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  backdrop-filter: blur(30px);
+  align-items: center;
+  padding: 10px 20px;
+  top: 0;
+  height: 8vh;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+.bgg{
+display: flex;
+min-height: 100vh;
+justify-content: center;
+align-items: center;
+background-position: center;
+background: url(../LoginForm/istockphoto-1000301206-170667a.webp) no-repeat;
+background-position: fix;
+background-size: cover;
+}
+
+{/*
+.container {
+  position: relative;
+}
+
+.center-right {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(0);
+  width: 900px;
+  height: 45vh;
+  /* Add any other styling as needed */
+}
+*/
+
+.logo {
+width: 50px;
+height: auto;
+}
+
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  
+}
+
+.nav-links li {
+  margin-right: 15px;
+  
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #0056b3;
+}
+
+.text h1 {
+  padding-top: 10px;
+  font-size: 60px;
+  color: darkgoldenrod;
+  
+
+}
+.om {
+  padding: auto;
+  font-size: 30px;
+  text-align: left;
+  padding-top: 50px;
+ 
+}
+
+.omm{
+  padding: auto;
+  font-size: 30px;
+  text-align: right;
+  padding-top: 50px;
+  
+}
+
+
+
+.instagram {
+  font-size: 50px;
+  padding-right: 20px;
+}
+
+.facebook {
+  font-size: 50px;
+  padding-right: 20px;
+
+}
+.twitter {
+  font-size: 50px;
+  padding-right: 20px;
+}
+
+.whatsapp {
+  font-size: 50px;
+  padding-right: 20px;
+}
+.telephone {
+  font-size: 50px;
+  padding-right: 20px;
+}
+
+
+/*footer*/
+footer {
+  background-color: white;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  bottom: 0;
+  width: 100%;
+}
+
+.social-icons {
+  margin-bottom: 10px;
+}
+
+.social-icons a {
+  margin: 0 10px;
+  display: inline-block;
+}
+
+.social-icons img {
+  width: 30px; /* Adjust the size as needed */
+  height: 30px;
+}
+
+.copy{
+  padding-top: 5px;
+}
+.copyy{
+  font-size: 20px;
+  padding-top: 10px;
+  font-family: 'Comic Sans mS';
+}
+
+
+
+/*emergency*/
+
+.emergency {
+  width: 500px;
+  background: rgb(80, 148, 134);
+  border: 1px solid black;
+  box-shadow: 5 5 5px rgba(156, 129, 129, 0.2);
+  border-radius: 20px;
+  color: black;
+  padding: 30px 40px;
+}
+
+
+.input{
+  background: whitesmoke;
+  border: none;
+  outline: none;  
+  border: 2px solid rgba(255, 255, 255, .2);
+  font-size: 12px;
+  color: black;
+  padding: 20px 45px 20px 20px;
+  border-radius: 20px;
+}
+.input-groupp {
+
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 30px 0;
+  color: black;
+
+}
+
+.input-groupp input {
+ 
+  width: 100%;
+  height: 100%;
+  background: whitesmoke;
+  border: 1px;
+  outline: none;  
+  border: 2px solid rgba(255, 255, 255, .2);
+  border-radius: 20px;
+  font-size: 16px;
+  color: black;
+  padding: 20px 45px 20px 20px;
+}
+
+.signn {
+  width: 100%;
+  height: 45px;
+  background: #fff;
+  border: none;
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+
+.logoo {
+  width: 50px;
+  height: auto;
+  }
+  .modalBackgroundd {
+    width: 100vw;
+    height: 100vh;
+    background-color: transparent;
+    backdrop-filter: blur(80px);
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .modalContainerr {
+    width: 500px;
+    height: 500px;
+    border-radius: 12px;
+    background-color: whitesmoke;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+  }
+  
+  .modalContainerr .titlee {
+    display: inline-block;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .titleCloseBtnn {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .titleCloseBtnn button {
+    background-color: transparent;
+    border: none;
+    font-size: 25px;
+    cursor: pointer;
+  }
+  
+  .modalContainerr .bodyy {
+    flex: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.7rem;
+    text-align: center;
+  }
+  
+  .modalContainerr .footerr {
+    flex: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modalContainerr .footerr button {
+    width: 150px;
+    height: 45px;
+    margin: 10px;
+    border: none;
+    background-color: green;
+    color: white;
+    border-radius: 8px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .cancelBtnn {
+    background-color: white;
+  }
+
+  .logo {
+    width: 50px;
+    height: auto;
+    }
+    .modalBackground {
+      width: 100vw;
+      height: 100vh;
+      background-color: transparent;
+      backdrop-filter: blur(80px);
+      position: fixed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    
+    .modalContainer {
+      width: 500px;
+      height: 500px;
+      border-radius: 12px;
+      background-color: whitesmoke;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      display: flex;
+      flex-direction: column;
+      padding: 25px;
+    }
+    
+    .modalContainer .title {
+      display: inline-block;
+      text-align: center;
+      margin-top: 10px;
+    }
+    
+    .titleCloseBtn {
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    .titleCloseBtn button {
+      background-color: transparent;
+      border: none;
+      font-size: 25px;
+      cursor: pointer;
+    }
+    
+    .modalContainer .body {
+      flex: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.7rem;
+      text-align: center;
+    }
+    
+    .modalContainer .footer {
+      flex: 20%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modalContainer .footer button {
+      width: 150px;
+      height: 45px;
+      margin: 10px;
+      border: none;
+      background-color: green;
+      color: white;
+      border-radius: 8px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    
+    .cancelBtn {
+      background-color: white;
+    }
