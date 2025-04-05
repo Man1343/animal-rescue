@@ -64,6 +64,7 @@ const Viewratings = () => {
             <Link to ='/Shelter' className='nav-item nav-link '>Manage Shelter</Link>
             <Link to ='/Adoption' class="nav-item nav-link">Manage Adoption</Link>
             <Link to ='/Ratings' class="nav-item nav-link">Manage Ratings</Link>
+            <Link to ='/Adminorders' className='nav-item nav-link'>Manage Orders</Link>
 
         </div>
             <Link to ='/' class="nav-item nav-link"><MdLogout className='ommm'/></Link>

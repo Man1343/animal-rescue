@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-// import { Card, CardContent } from "@/components/ui/card";
-// import { Input } from "@/components/ui/input";
-// import { Button } from "@/components/ui/button";
-// import { Send } from "lucide-react";
-
+import { MessageCircle } from "lucide-react";
 
 const predefinedQuestions = [
     "What services do you offer?",
@@ -16,75 +12,140 @@ const predefinedQuestions = [
 const Chatbot = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
 
-    // const sendMessage = async () => {
-    //     if (!input.trim()) return;
     const sendMessage = async (message) => {
         if (!message.trim()) return;
-
-        // const userMessage = { text: input, sender: "user" };
+        
+        console.log("Sending message:", message);
+        
         const userMessage = { text: message, sender: "user" };
-        setMessages([...messages, userMessage]);
+        setMessages(prev => [...prev, userMessage]);
         setInput("");
 
+        const userId = 1;
+        
         try {
-            // const response = await fetch("/chatbot", {
-            const response = await fetch("http://localhost:5000/chatbot", {
+            const response = await fetch("http://localhost:8081/chatbot", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                // body: JSON.stringify({ message: input }),
-                body: JSON.stringify({ message }),
+                body: JSON.stringify({ message, user_id: userId }),
             });
 
-            // if (!response.ok) {
-            //     throw new Error(`Server error: ${response.status}`);
-            // }
-
-            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
             
-            // if (!data.response) {
-            //     throw new Error("Invalid response format from server");
-            // }
-
+            const data = await response.json();
+            console.log("Chatbot response:", data.response);
             const botMessage = { text: data.response, sender: "bot" };
-            setMessages((prev) => [...prev, botMessage]);
+            setMessages(prev => [...prev, botMessage]);
         } catch (error) {
             console.error("Chatbot error:", error);
-            // setMessages((prev) => [...prev, { text: "Error: Unable to get response. Please try again later.", sender: "bot" }]);
+            setMessages(prev => [...prev, { text: "Error: Unable to get response. Please try again later.", sender: "bot" }]);
         }
     };
 
-    // return (
-    //     <Card className="w-96 p-4 shadow-lg rounded-2xl fixed bottom-4 right-4 bg-white">
-    //         <CardContent className="h-80 overflow-y-auto space-y-2">
-    //             {messages.map((msg, index) => (
-    //                 <div key={index} className={`p-2 rounded-lg text-sm ${msg.sender === "user" ? "bg-blue-500 text-white self-end" : "bg-gray-200 text-black"}`}>
-    //                     {msg.text}
-    //                 </div>
-    //             ))}
-    //         </CardContent>
-    //         <div className="flex items-center p-2 border-t">
-    //             <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask a question..." className="flex-grow mr-2" />
-    //             <Button onClick={sendMessage} className="bg-blue-500 text-white p-2 rounded-lg">
-    //                 <Send size={16} />
-    //             </Button>
-    //         </div>
-    //     </Card>
-    // );
-
     return (
-        <div style={{ position: "fixed", bottom: "20px", right: "100px", width: "300px", background: "white", padding: "10px", borderRadius: "10px", boxShadow: "0px 0px 10px rgba(0,0,0,0.1)" }}>
-            <div style={{ height: "200px", overflowY: "auto", marginBottom: "10px" }}>
-                {messages.map((msg, index) => (
-                    <div key={index} style={{ padding: "5px", borderRadius: "5px", backgroundColor: msg.sender === "user" ? "#007bff" : "#e5e5e5", color: msg.sender === "user" ? "white" : "black", textAlign: msg.sender === "user" ? "right" : "left" }}>
-                        {msg.text}
+        <div>
+            {!isOpen && (
+                <button onClick={() => setIsOpen(true)} style={{ 
+                    position: "fixed", 
+                    bottom: "20px", 
+                    right: "100px", 
+                    backgroundColor: "#007bff", 
+                    border: "none", 
+                    borderRadius: "50%", 
+                    width: "70px", 
+                    height: "70px", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center", 
+                    cursor: "pointer", 
+                    boxShadow: "0px 4px 10px rgba(0,0,0,0.15)"
+                }}>
+                    <MessageCircle color="white" size={24} />
+                </button>
+            )}
+            {isOpen && (
+                <div style={{ 
+                    position: "fixed", 
+                    bottom: "20px", 
+                    right: "100px", 
+                    width: "320px", 
+                    background: "#ffffff", 
+                    padding: "15px", 
+                    borderRadius: "12px", 
+                    boxShadow: "0px 4px 10px rgba(0,0,0,0.15)",
+                    fontFamily: "Arial, sans-serif",
+                    border: "1px solid #ddd"
+                }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                        <h3 style={{ color: "#007bff", margin: 0 }}>Chatbot</h3>
+                        <button onClick={() => setIsOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "16px" }}>✖</button>
                     </div>
-                ))}
-            </div>
-            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask a question..." style={{ width: "80%", padding: "5px", marginRight: "5px" }} />
-            <button onClick={sendMessage} style={{ padding: "5px", backgroundColor: "#007bff", color: "white", border: "none", cursor: "pointer" }}>
-                Send
-            </button>
+                    <div style={{ height: "220px", overflowY: "auto", marginBottom: "10px", padding: "10px", background: "#f9f9f9", borderRadius: "8px" }}>
+                        {messages.map((msg, index) => (
+                            <div key={index} style={{ 
+                                padding: "8px", 
+                                borderRadius: "6px", 
+                                backgroundColor: msg.sender === "user" ? "#007bff" : "#e5e5e5", 
+                                color: msg.sender === "user" ? "white" : "black", 
+                                textAlign: msg.sender === "user" ? "right" : "left", 
+                                marginBottom: "5px",
+                                maxWidth: "80%",
+                                alignSelf: msg.sender === "user" ? "flex-end" : "flex-start"
+                            }}>
+                                {msg.text}
+                            </div>
+                        ))}
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "10px", justifyContent: "center" }}>
+                        {predefinedQuestions.map((question, index) => (
+                            <button key={index} onClick={() => sendMessage(question)} style={{ 
+                                padding: "6px 10px", 
+                                backgroundColor: "#f0f0f0", 
+                                border: "1px solid #ccc", 
+                                cursor: "pointer", 
+                                borderRadius: "20px", 
+                                fontSize: "12px", 
+                                transition: "0.3s", 
+                                whiteSpace: "nowrap"
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = "#e0e0e0"}
+                            onMouseOut={(e) => e.target.style.backgroundColor = "#f0f0f0"}
+                            >
+                                {question}
+                            </button>
+                        ))}
+                    </div>
+                    <div style={{ display: "flex" }}>
+                        <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Type a message..." style={{ 
+                            width: "75%", 
+                            padding: "8px", 
+                            border: "1px solid #ccc", 
+                            borderRadius: "20px", 
+                            outline: "none" 
+                        }} />
+                        <button onClick={() => sendMessage(input)} style={{ 
+                            padding: "8px 15px", 
+                            backgroundColor: "#007bff", 
+                            color: "white", 
+                            border: "none", 
+                            cursor: "pointer", 
+                            borderRadius: "20px", 
+                            marginLeft: "5px",
+                            fontSize: "14px",
+                            transition: "0.3s" 
+                        }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = "#0056b3"}
+                        onMouseOut={(e) => e.target.style.backgroundColor = "#007bff"}
+                        >
+                            Send
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

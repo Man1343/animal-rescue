@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.15"
+  },
+  "dependencies": {
+    "mysql2": "^3.14.0"
+  }
+}

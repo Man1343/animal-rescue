@@ -7,6 +7,7 @@ import Updateshelter from './Components/Manage/Updateshelter';
 import Ratings from './Components/Manage/Ratings'
 import Record from './Components/Manage/Record';
 import Emergencyrecord from './Components/Manage/Emergencyrecord';
+import Adminorders from './Components/Manage/AdminOrders';
 
 
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
@@ -26,6 +27,7 @@ function App() {
           <Route path='/Ratings' element={<Ratings/>}></Route>
           <Route path='/Record' element={<Record/>}></Route>
           <Route path='/Emergencyrecord' element={<Emergencyrecord/>}></Route>
+          <Route path='/Adminorders' element={<Adminorders/>}></Route>
           </Routes>
           </Router>
     </div>

@@ -41,7 +41,15 @@ const Reportemergency = () => {
             case 'option4':
               navigate('/Adoptionview');
               break;
-             
+            case 'option5':
+              navigate('/Petstore');
+              break;
+            case 'option6':
+              navigate('/Userorders');
+              break; 
+            case 'option7':
+              navigate('/Ratings');
+              break;
             default:
               break;
           }
@@ -98,6 +106,9 @@ const Reportemergency = () => {
                         <option value="option2" className='nav-item nav-link'>Report Emergency</option>
                         <option value="option3" className='nav-item nav-link'>Adotion Post</option>
                         <option value="option4" className='nav-item nav-link'>Adoption View</option>
+                        <option value="option5" className='nav-item nav-link'>Petstore</option>
+                        <option value="option6" className='nav-item nav-link'>Orders</option>
+                        <option value="option7" className='nav-item nav-link'>Ratings</option>
                        
                     </select>
         </div>

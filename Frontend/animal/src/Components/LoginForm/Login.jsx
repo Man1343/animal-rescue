@@ -33,10 +33,18 @@ const Login = () => {
         try {
           const res = await axios.post(Constant.URLs.ApiUrl + '/login', values);
   
-          if (res.data === 'login successfully') {
+          // if (res.data === 'Login successful') {
+          if (res.data.success) { 
             navigate('/Navbar');
+
+            localStorage.setItem("userEmail", values.email);
+            console.log("userEmail:", values.email);
+
+            console.log("Navigated to home page");
           } else {
-            alert('No record');
+            // alert('No record');
+            alert(res.error.message);
+            console.log("Error found");
           }
         } catch (error) {
           if (error.response && error.response.status === 404) {

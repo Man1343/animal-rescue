@@ -41,7 +41,15 @@ const Adoptionpost = () => {
             case 'option4':
               navigate('/Adoptionview');
               break;
-
+            case 'option5':
+              navigate('/Petstore');
+              break;
+            case 'option6':
+              navigate('/Userorders');
+              break;
+            case 'option7':
+              navigate('/Ratings');
+              break;
             default:
               break;
           }
@@ -107,11 +115,14 @@ const Adoptionpost = () => {
                 <Link to ='/about' className='nav-item nav-link '>about</Link>
                 <Link to ='/Contact' class="nav-item nav-link">Contact</Link>
                 <select onChange={handleChange} className='nav-item nav-link' style={{border: "none"}}>
-                        <option value="option1" className='nav-item nav-link'>Select Your Option</option>
-                        <option value="option2" className='nav-item nav-link'>Report Emergency</option>
-                        <option value="option3" className='nav-item nav-link'>Adotion Post</option>
-                        <option value="option4" className='nav-item nav-link'>Adoption View</option>
-                    </select>
+                  <option value="option1" className='nav-item nav-link'>Select Your Option</option>
+                  <option value="option2" className='nav-item nav-link'>Report Emergency</option>
+                  <option value="option3" className='nav-item nav-link'>Adotion Post</option>
+                  <option value="option4" className='nav-item nav-link'>Adoption View</option>
+                  <option value="option5" className='nav-item nav-link'>Petstore</option>
+                  <option value="option6" className='nav-item nav-link'>Orders</option>
+                  <option value="option7" className='nav-item nav-link'>Ratings</option>
+                </select>
         </div>
             <Link to ='/' class="nav-item nav-link"><MdLogout className='ommm'/></Link>
         </div>

@@ -1,7 +1,7 @@
 const path = require('path');
 const multer = require('multer');
 const express = require('express')
-const mysql = require('mysql')
+// const mysql = require('mysql')
 const cors = require('cors')
 const nodemailer = require('nodemailer');
 
@@ -29,13 +29,37 @@ app.use("/public", express.static(path.join(__dirname, 'public')));
 //   database: 'animal',
 // });
 
+// const db = mysql.createPool({
+//   connectionLimit: 100, // Adjust based on your application's needs
+//   host: 'localhost',
+//   user: 'root',
+//   password: '',
+//   database: 'animal',
+// });
+
+// this is the database connection from xampp
+const mysql = require('mysql2');
 const db = mysql.createPool({
-  connectionLimit: 100, // Adjust based on your application's needs
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'animal',
+    host: 'localhost',
+    user: 'root', 
+    password: '', 
+    database: 'animal',
+    waitForConnections: true,
+    connectionLimit: 100,
+    queueLimit: 0,
 });
+db.getConnection((err, connection) => {
+  if (err) {
+    console.error("Database connection failed:", err);
+  } else {
+    console.log("Connected to MySQL database!");
+    connection.release(); // Release connection back to pool
+  }
+});
+module.exports = db;
+
+
+
 
 
 // You don't need db.connect() with a connection pool
@@ -57,12 +81,13 @@ const storage2 = multer.diskStorage({
   }
 })
 
+// this is for creating adoption post
 const uploadFile2 = multer({
   storage: storage2,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter(req, file, callback) {
-    const extension = ['.png', '.jpg', '.jpeg'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
-    const mimeType  = ['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.mimetype) >= 0;
+    const extension = ['.png', '.jpg', '.jpeg', '.webp'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
+    const mimeType  = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'].indexOf(file.mimetype) >= 0;
     
     if (extension && mimeType) {
       return callback(null, true);
@@ -72,12 +97,13 @@ const uploadFile2 = multer({
   },
 });
 
+// this is for reporting emergency
 const uploadFile = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter(req, file, callback) {
-    const extension = ['.png', '.jpg', '.jpeg'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
-    const mimeType  = ['image/png', 'image/jpg', 'image/jpeg'].indexOf(file.mimetype) >= 0;
+    const extension = ['.png', '.jpg', '.jpeg', '.webp'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
+    const mimeType  = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'].indexOf(file.mimetype) >= 0;
     
     if (extension && mimeType) {
       return callback(null, true);
@@ -87,7 +113,7 @@ const uploadFile = multer({
   },
 });
 
-
+// for user signup
 app.post('/api/signup', (req, res) => {
   try {
     const { first_name, email, mobile_no, password } = req.body;
@@ -122,7 +148,7 @@ function sendConfirmationEmail(email) {
       from: 'omsomani789@gmail.com',
       to: email,
       subject: 'Registration Confirmation',
-      text: 'Thank you for Joining with Animal_ResQ! Your account is now active,you can login now.'
+      text: 'Thank you for Joining with Paw Protectors! Your account is now active,you can login now.'
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -134,6 +160,7 @@ function sendConfirmationEmail(email) {
   });
 }
 
+// for shelter signupp
 app.post('/api/signupp', (req, res) => {
   try {
     const {shelter_name, email, mobile_no, password, shelter_address } = req.body;
@@ -178,7 +205,7 @@ app.post('/Navbar',(req, res) => {
 app.post('/upload',uploadFile.single('image'),(req,res) => {
   console.log(req);
   console.log(req.file.filename);
-  //console.log(req.file);   
+  console.log(req.file);   
   const image = req.file.filename;
   return res.json(image);
 })
@@ -209,7 +236,8 @@ app.post('/Reportemergency',uploadFile.single('image'),(req, res) => {
   const {email,address,contact} = req.body;
   const image = req.file.filename;
 
-  const getUserInfoSql = 'SELECT unique_id FROM registration_user WHERE email = ?';
+  // const getUserInfoSql = 'SELECT unique_id FROM registration_user WHERE email = ?';
+  const getUserInfoSql = 'SELECT user_id FROM registration_user WHERE email = ?';
   db.query(getUserInfoSql, [email], (err, results) => {
     if (err) return res.json(err);
     if (results.length === 0) {
@@ -218,9 +246,11 @@ app.post('/Reportemergency',uploadFile.single('image'),(req, res) => {
     const user = results[0];
     const lastLoginTime = new Date();
     const img = imageBasePath + "/" +image;
-    const logLastLoginSql = 'INSERT INTO emergency_report (`unique_id`, `address`, `contact`, `photo_url`, `date`, `email`) VALUES (?, ?, ?, ?, ?,?)';
-    db.query(logLastLoginSql, [user.unique_id, address, contact, img, lastLoginTime, email ], (logErr) => {
-      if (logErr) {
+    // const logLastLoginSql = 'INSERT INTO emergency_report (`unique_id`, `address`, `contact`, `photo_url`, `date`, `email`) VALUES (?, ?, ?, ?, ?,?)';
+    const logLastLoginSql = 'INSERT INTO emergency_report (`user_id`, `address`, `contact`, `photo_url`, `date`, `email`) VALUES (?, ?, ?, ?, ?,?)';
+    // db.query(logLastLoginSql, [user.unique_id, address, contact, img, lastLoginTime, email ], (logErr) => {
+    db.query(logLastLoginSql, [user.user_id, address, contact, img, lastLoginTime, email ], (logErr) => {
+        if (logErr) {
         console.error('Error logging last login', logErr);
       }
       res.json("reported successfully");
@@ -230,20 +260,40 @@ app.post('/Reportemergency',uploadFile.single('image'),(req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  const getUserInfoSql = 'SELECT unique_id FROM registration_user WHERE email = ? AND password = ?';
+  // const getUserInfoSql = 'SELECT unique_id FROM registration_user WHERE email = ? AND password = ?';
+  const getUserInfoSql = 'SELECT user_id FROM registration_user WHERE email = ? AND password = ?';
   db.query(getUserInfoSql, [email,password], (err, results) => {
-    if (err) return res.json(err);
+    // if (err) return res.json(err);
+    if (err) {
+      console.error("Database Error:", err);
+      return res.json({ success: false, message: 'Database error' });
+    }
+    console.log("Query Results:", results);
+  
     if (results.length === 0) {
-      return res.json('no record');
+      // return res.json('no record');
+      console.log("No record found for email:", email);
+      return res.json({ success: false, message: 'No record found' });
     }
     const user = results[0];
     const lastLoginTime = new Date().toISOString();
-    const logLastLoginSql = 'INSERT INTO user_activity (unique_id, email, login_time) VALUES (?, ?, ?)';
-    db.query(logLastLoginSql, [user.unique_id, email, lastLoginTime], (logErr) => {
+    // const logLastLoginSql = 'INSERT INTO user_activity (unique_id, email, login_time) VALUES (?, ?, ?)';
+    const logLastLoginSql = 'INSERT INTO user_activity (user_id, email, login_time) VALUES (?, ?, ?)';
+    db.query(logLastLoginSql, [user.user_id, email, lastLoginTime], (logErr) => {
       if (logErr) {
         console.error('Error logging last login', logErr);
       }
-      res.json("login successfully");
+      // res.json("login successfully");
+      // res.json({
+      const responseData = {
+        success: true,
+        message: "Login successful",
+        user_id: user.user_id,  // Return user_id
+        userEmail: email,        // Return email
+      };
+      // console.log("login successful");
+      console.log("Response Data:", responseData);
+      res.json(responseData);
     });
   });
 });
@@ -260,7 +310,9 @@ app.post('/Adoptionpost',uploadFile2.single('image'),(req, res) => {
   const {email, animal_name, species, age, description, mobile_no} = req.body;
   const image = req.file.filename;
 
-  const getUserInfoSql = 'SELECT unique_id FROM registration_user WHERE email = ?';
+  // const getUserInfoSql = 'SELECT unique_id FROM registration_user WHERE email = ?';
+  // const getUserInfoSql = 'SELECT user_id FROM registration_user WHERE email = ?';
+  const getUserInfoSql = 'SELECT shelter_id FROM registration_shelter WHERE email = ?';
   db.query(getUserInfoSql,[email], (err,results) => {
     if(err) return res.json(err);
     if(results.length === 0) {
@@ -268,9 +320,13 @@ app.post('/Adoptionpost',uploadFile2.single('image'),(req, res) => {
     }
     const user = results[0];
     const img =  imageBasePath2 +"/" +image;
-    const logLastLoginSql = "INSERT INTO animal_for_adoption (`unique_id`,`animal_name`, `species`, `age` , `description` , `image_url`,  `mobile_no`, `email`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    db.query(logLastLoginSql,[user.unique_id, animal_name, species, age, description, img, mobile_no, email], (logErr) => {
-      if (logErr) {
+    // const logLastLoginSql = "INSERT INTO animal_for_adoption (`unique_id`,`animal_name`, `species`, `age` , `description` , `image_url`,  `mobile_no`, `email`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    // const logLastLoginSql = "INSERT INTO animal_for_adoption (`user_id`,`animal_name`, `species`, `age` , `description` , `image_url`,  `mobile_no`, `email`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    const logLastLoginSql = "INSERT INTO animal_for_adoption (`shelter_id`,`animal_name`, `species`, `age` , `description` , `image_url`,  `mobile_no`, `email`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    // db.query(logLastLoginSql,[user.unique_id, animal_name, species, age, description, img, mobile_no, email], (logErr) => {
+    // db.query(logLastLoginSql,[user.user_id, animal_name, species, age, description, img, mobile_no, email], (logErr) => {
+    db.query(logLastLoginSql,[user.shelter_id, animal_name, species, age, description, img, mobile_no, email], (logErr) => {
+        if (logErr) {
         console.error("error logging last login",logErr);
       }
       res.json("post successfully");
@@ -282,7 +338,8 @@ app.post('/Adoptionpostt',uploadFile2.single('image'),(req, res) => {
   const {email, animal_name, species, age, description, mobile_no} = req.body;
   const image = req.file.filename;
 
-  const getUserInfoSql = 'SELECT unique_id FROM registration_shelter WHERE email = ?';
+  // const getUserInfoSql = 'SELECT unique_id FROM registration_shelter WHERE email = ?';
+  const getUserInfoSql = 'SELECT shelter_id FROM registration_shelter WHERE email = ?';
   db.query(getUserInfoSql,[email], (err,results) => {
     if(err) return res.json(err);
     if(results.length === 0) {
@@ -290,9 +347,11 @@ app.post('/Adoptionpostt',uploadFile2.single('image'),(req, res) => {
     }
     const user = results[0];
     const img =  imageBasePath2 +"/" +image;
-    const logLastLoginSql = "INSERT INTO animal_for_adoption (`unique_id`,`animal_name`, `species`, `age` , `description` , `image_url`,  `mobile_no`, `email`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    db.query(logLastLoginSql,[user.unique_id, animal_name, species, age, description, img, mobile_no, email], (logErr) => {
-      if (logErr) {
+    // const logLastLoginSql = "INSERT INTO animal_for_adoption (`unique_id`,`animal_name`, `species`, `age` , `description` , `image_url`,  `mobile_no`, `email`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    const logLastLoginSql = "INSERT INTO animal_for_adoption (`shelter_id`,`animal_name`, `species`, `age` , `description` , `image_url`,  `mobile_no`, `email`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    // db.query(logLastLoginSql,[user.unique_id, animal_name, species, age, description, img, mobile_no, email], (logErr) => {
+    db.query(logLastLoginSql,[user.shelter_id, animal_name, species, age, description, img, mobile_no, email], (logErr) => {
+        if (logErr) {
         console.error("error logging last login",logErr);
       }
       res.json("post successfully");
@@ -301,10 +360,11 @@ app.post('/Adoptionpostt',uploadFile2.single('image'),(req, res) => {
 });
 
 
-
+// shelter loginn api
 app.post('/loginn', (req, res) => {
   const { email, password } = req.body;
-  const getUserInfoSql = 'SELECT unique_id, mobile_no,shelter_name,shelter_address FROM registration_shelter WHERE email = ? AND password = ?';
+  // const getUserInfoSql = 'SELECT unique_id, mobile_no,shelter_name,shelter_address FROM registration_shelter WHERE email = ? AND password = ?';
+  const getUserInfoSql = 'SELECT shelter_id, mobile_no,shelter_name,shelter_address FROM registration_shelter WHERE email = ? AND password = ?';
 
   db.query(getUserInfoSql, [email, password], (err, results) => {
     if (err) return res.json(err);
@@ -315,16 +375,21 @@ app.post('/loginn', (req, res) => {
     const user = results[0];
     const lastLoginTime = new Date().toISOString(); // Local time of the server
 
-    const logLastLoginSql = 'INSERT INTO shelter_activity (unique_id, mobile_no, email, login_time, shelter_name, shelter_address) VALUES (?, ?, ?, ?, ?, ?)';
+    // const logLastLoginSql = 'INSERT INTO shelter_activity (unique_id, mobile_no, email, login_time, shelter_name, shelter_address) VALUES (?, ?, ?, ?, ?, ?)';
+    const logLastLoginSql = 'INSERT INTO shelter_activity (shelter_id, mobile_no, email, login_time, shelter_name, shelter_address) VALUES (?, ?, ?, ?, ?, ?)';
     
-    db.query(logLastLoginSql, [user.unique_id, user.mobile_no, email, lastLoginTime, user.shelter_name, user.shelter_address], (logErr) => {
-      if (logErr) {
+    // db.query(logLastLoginSql, [user.unique_id, user.mobile_no, email, lastLoginTime, user.shelter_name, user.shelter_address], (logErr) => {
+    db.query(logLastLoginSql, [user.shelter_id, user.mobile_no, email, lastLoginTime, user.shelter_name, user.shelter_address], (logErr) => {
+        if (logErr) {
         console.error('Error logging last login', logErr);
       }
       res.json("login successfully");
     });
   });
 });
+
+
+
 
 app.post('/Admin',(req, res) => {
   const sql = "SELECT email,password FROM admin WHERE email = ? AND password = ?";
@@ -363,9 +428,12 @@ db.query(sql, (err, data) => {
 });
 
 app.put('/updateuser', (req, res) => {
-  const { unique_id, newName, newEmail, newContact } = req.body;
-  const sql = 'UPDATE registration_user SET first_name = ? , email = ? , mobile_no = ? WHERE unique_id = ?';
-  db.query(sql, [newName, newEmail, newContact, unique_id], (err, result) => {
+  // const { unique_id, newName, newEmail, newContact } = req.body;
+  // const sql = 'UPDATE registration_user SET first_name = ? , email = ? , mobile_no = ? WHERE unique_id = ?';
+  // db.query(sql, [newName, newEmail, newContact, unique_id], (err, result) => {
+  const { user_id, newName, newEmail, newContact } = req.body;
+  const sql = 'UPDATE registration_user SET first_name = ? , email = ? , mobile_no = ? WHERE user_id = ?';
+  db.query(sql, [newName, newEmail, newContact, user_id], (err, result) => {
     if (err) {
       console.error('Error updating data:', err);
       res.status(500).send('Internal Server Error');
@@ -377,9 +445,12 @@ app.put('/updateuser', (req, res) => {
 });
 
 app.put('/updateshelter', (req, res) => {
-  const { unique_id, newName, newEmail, newContact, newAddress } = req.body;
-  const sql = 'UPDATE registration_shelter SET shelter_name = ? , email = ? , mobile_no = ? , shelter_address = ? WHERE unique_id = ?';
-  db.query(sql, [newName, newEmail, newContact, newAddress, unique_id], (err, result) => {
+  // const { unique_id, newName, newEmail, newContact, newAddress } = req.body;
+  // const sql = 'UPDATE registration_shelter SET shelter_name = ? , email = ? , mobile_no = ? , shelter_address = ? WHERE unique_id = ?';
+  // db.query(sql, [newName, newEmail, newContact, newAddress, unique_id], (err, result) => {
+  const { shelter_id, newName, newEmail, newContact, newAddress } = req.body;
+  const sql = 'UPDATE registration_shelter SET shelter_name = ? , email = ? , mobile_no = ? , shelter_address = ? WHERE shelter_id = ?';
+  db.query(sql, [newName, newEmail, newContact, newAddress, shelter_id], (err, result) => {
     if (err) {
       console.error('Error updating data:', err);
       res.status(500).send('Internal Server Error');
@@ -390,12 +461,16 @@ app.put('/updateshelter', (req, res) => {
   });
 });
 
-app.delete('/deleteUser/:unique_id', (req, res) => {
-  const unique_id = req.params.unique_id;
+// app.delete('/deleteUser/:unique_id', (req, res) => {
+// const unique_id = req.params.unique_id;
+// const deleteQuery = 'DELETE FROM registration_user WHERE unique_id = ?';
+// db.query(deleteQuery, [unique_id], (err, result) => {
+app.delete('/deleteUser/:user_id', (req, res) => {
+  const user_id = req.params.user_id;
+  
+  const deleteQuery = 'DELETE FROM registration_user WHERE user_id = ?';
 
-  const deleteQuery = 'DELETE FROM registration_user WHERE unique_id = ?';
-
-  db.query(deleteQuery, [unique_id], (err, result) => {
+  db.query(deleteQuery, [user_id], (err, result) => {
     if (err) {
       console.error('Error deleting user:', err);
       res.status(500).send('Internal Server Error');
@@ -405,12 +480,16 @@ app.delete('/deleteUser/:unique_id', (req, res) => {
   });
 });
 
-app.delete('/deleteshelter/:unique_id', (req, res) => {
-  const unique_id = req.params.unique_id;
-
-  const deleteQuery = 'DELETE FROM registration_shelter WHERE unique_id = ?';
-
-  db.query(deleteQuery, [unique_id], (err, result) => {
+// app.delete('/deleteshelter/:unique_id', (req, res) => {
+//   const unique_id = req.params.unique_id;
+//   const deleteQuery = 'DELETE FROM registration_shelter WHERE unique_id = ?';
+//   db.query(deleteQuery, [unique_id], (err, result) => {
+app.delete('/deleteshelter/:shelter_id', (req, res) => {
+    const shelter_id = req.params.shelter_id;
+  
+    const deleteQuery = 'DELETE FROM registration_shelter WHERE shelter_id = ?';
+  
+    db.query(deleteQuery, [shelter_id], (err, result) => {
     if (err) {
       console.error('Error deleting user:', err);
       res.status(500).send('Internal Server Error');
@@ -440,7 +519,8 @@ app.delete('/deletepost/:animal_id', (req, res) => {
 app.post('/api/send-email', async (req, res) => {
   const { email } = req.body;
 
-  const om = 'SELECT email,mobile_no FROM shelter_activity ORDER BY activity_id DESC LIMIT 1; ';
+  // const om = 'SELECT email,mobile_no FROM shelter_activity ORDER BY activity_id DESC LIMIT 1; ';
+  const om = 'SELECT email,mobile_no FROM shelter_activity ORDER BY shelter_id DESC LIMIT 1; ';
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -485,15 +565,18 @@ app.post('/api/send-email', async (req, res) => {
 
 app.post('/ratings', (req, res) => {
   const { email,feedback } = req.body;
-  const getUserInfoSql = 'SELECT unique_id FROM registration_user WHERE email = ? ';
+  // const getUserInfoSql = 'SELECT unique_id FROM registration_user WHERE email = ? ';
+  const getUserInfoSql = 'SELECT user_id FROM registration_user WHERE email = ? ';
   db.query(getUserInfoSql, [email], (err, results) => {
     if (err) return res.json(err);
     if (results.length === 0) {
       return res.json('submitted successfully');
     }
     const user = results[0];
-    const logLastLoginSql = 'INSERT INTO ratings (unique_id, email, feedback) VALUES (?, ?, ?)';
-    db.query(logLastLoginSql, [user.unique_id, email,feedback], (logErr) => {
+    // const logLastLoginSql = 'INSERT INTO ratings (unique_id, email, feedback) VALUES (?, ?, ?)';
+    // db.query(logLastLoginSql, [user.unique_id, email,feedback], (logErr) => {
+    const logLastLoginSql = 'INSERT INTO ratings (user_id, email, feedback) VALUES (?, ?, ?)';
+    db.query(logLastLoginSql, [user.user_id, email,feedback], (logErr) => {
       if (logErr) {
         console.error('Error logging last login', logErr);
       }
@@ -711,7 +794,8 @@ function sendNewPasswordEmail(email, newPassword) {
 }
 
 app.get('/api/userUniqueId', (req, res) => {
-  const query = 'SELECT unique_id FROM registration_user ORDER BY unique_id DESC LIMIT 1';
+  // const query = 'SELECT unique_id FROM registration_user ORDER BY unique_id DESC LIMIT 1';
+  const query = 'SELECT user_id FROM registration_user ORDER BY user_id DESC LIMIT 1';
 
   db.query(query, (err, result) => {
     if (err) {
@@ -725,7 +809,8 @@ app.get('/api/userUniqueId', (req, res) => {
 
 // Define route to fetch last unique_id from registration_shelter table
 app.get('/api/shelterUniqueId', (req, res) => {
-  const query = 'SELECT unique_id FROM registration_shelter ORDER BY unique_id DESC LIMIT 1';
+  // const query = 'SELECT unique_id FROM registration_shelter ORDER BY unique_id DESC LIMIT 1';
+  const query = 'SELECT shelter_id FROM registration_shelter ORDER BY shelter_id DESC LIMIT 1';
 
   db.query(query, (err, result) => {
     if (err) {
@@ -751,8 +836,9 @@ app.get('/api/accepted', (req, res) => {
 FROM
   (SELECT address,contact,date,email FROM emergency_report ORDER BY report_id DESC LIMIT 1) er
 JOIN
- (SELECT mobile_no,shelter_name,shelter_address FROM shelter_activity ORDER BY activity_id DESC LIMIT 1) sa;
+ (SELECT mobile_no,shelter_name,shelter_address FROM shelter_activity ORDER BY shelter_id DESC LIMIT 1) sa;
   `;
+//  (SELECT mobile_no,shelter_name,shelter_address FROM shelter_activity ORDER BY activity_id DESC LIMIT 1) sa;
 
   db.query(query, (err, result) => {
     if (err) {
@@ -800,12 +886,319 @@ db.query(sql, (err, data) => {
 
 
 
+
+// API route to get products
+app.get("/products", (req, res) => {
+  const sql = "SELECT * FROM product"; 
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Database error" });
+    } else {
+      // console.log("Fetched products:", results); // Debugging log
+      res.json(results);
+    }
+  });
+});
+
+// API to place-order
+// this one worked properly
+// app.post("/place-order", (req, res) => {
+//   const { email, address, card_number, products } = req.body;
+
+//   if (!email || !address || !card_number || !products || products.length === 0) {
+//     return res.status(400).json({ error: "Missing order details" });
+//   }
+
+//   // ✅ Fetch user_id from user_activity
+//   db.query("SELECT user_id FROM user_activity WHERE email = ?", [email], (err, userResult) => {
+//     if (err) {
+//       console.error("Error fetching user:", err);
+//       return res.status(500).json({ error: "Database error" });
+//     }
+
+//     if (!userResult || userResult.length === 0) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+//     const user_id = userResult[0].user_id;
+//     const order_date = new Date().toISOString().slice(0, 19).replace("T", " "); // Format YYYY-MM-DD HH:MM:SS
+//     const status = "Pending"; // Default status
+//     const orderId = `ORD${Date.now()}`; // Unique order ID
+
+//     // ✅ Calculate total amount
+//     let totalAmount = 0;
+//     products.forEach((item) => {
+//       totalAmount += item.price * item.qty;
+//     });
+
+//     // ✅ Convert `products` array to JSON for storage
+//     const orderItems = JSON.stringify(products);
+
+//     // ✅ Insert **ONE ROW** per order (No duplicate `order_id` issue)
+//     const orderQuery = `
+//       INSERT INTO order_data (order_id, user_id, email, order_date, ship_address, status, order_items, total_amount, card_no)
+//       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+//     `;
+
+//     db.query(orderQuery, [orderId, user_id, email, order_date, address, status, orderItems, totalAmount, card_number], (err, result) => {
+//       if (err) {
+//         console.error("Error inserting order:", err);
+//         return res.status(500).json({ error: "Failed to place order" });
+//       }
+
+//       res.status(200).json({
+//         success: true,
+//         message: "Order placed successfully",
+//         order_id: orderId,
+//       });
+//     });
+//   });
+// });
+app.post("/place-order", (req, res) => {
+  const { email, address, card_number, products } = req.body;
+
+  if (!email || !address || !card_number || !products || products.length === 0) {
+    return res.status(400).json({ error: "Missing order details" });
+  }
+
+  // Fetch user_id from user_activity
+  db.query("SELECT user_id FROM user_activity WHERE email = ?", [email], (err, userResult) => {
+    if (err) {
+      console.error("Error fetching user:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (!userResult || userResult.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const user_id = userResult[0].user_id;
+    const order_date = new Date().toISOString().slice(0, 19).replace("T", " "); // Format YYYY-MM-DD HH:MM:SS
+    const status = "Pending"; // Default status
+    const orderId = `ORD${Date.now()}`; // Unique order ID
+
+    // Calculate total amount & total number of products
+    let totalAmount = 0;
+    let totalProducts = 0;
+
+    products.forEach((item) => {
+      totalAmount += item.price * item.qty; // Total price
+      totalProducts += item.qty; // Total number of items
+    });
+
+    // Insert **total number of products** in `order_items`
+    const orderQuery = `
+      INSERT INTO order_data (order_id, user_id, email, order_date, ship_address, status, order_items, total_amount, card_no)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(orderQuery, [orderId, user_id, email, order_date, address, status, totalProducts, totalAmount, card_number], (err, result) => {
+      if (err) {
+        console.error("Error inserting order:", err);
+        return res.status(500).json({ error: "Failed to place order" });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Order placed successfully",
+        order_id: orderId,
+        total_products: totalProducts, // Return total number of products
+      });
+    });
+  });
+});
+
+// get orders of the particular user
+app.get("/orders/:email", (req, res) => {
+  const email = req.params.email;
+
+  db.query("SELECT * FROM order_data WHERE email = ?", [email], (err, results) => {
+    if (err) {
+      console.error("Error fetching orders:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (results.length === 0) {
+      console.log("No orders found");
+      return res.status(200).json({ message: "You have not placed any orders yet" });
+      // return res.status(404).json({ error: "No orders found for this user" });
+    }
+
+    res.status(200).json(results);
+  });
+});
+
+
+
+// GET all orders for admin
+app.get("/orders", (req, res) => {
+  db.query("SELECT * FROM order_data", (err, results) => {
+    if (err) {
+      console.error("Error fetching orders:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.status(200).json(results);
+  });
+});
+
+// PATCH update order status
+app.patch("/orders/:order_id", (req, res) => {
+  const { order_id } = req.params;
+  const { status } = req.body;
+
+  db.query(
+    "UPDATE order_data SET status = ? WHERE order_id = ?",
+    [status, order_id],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating status:", err);
+        return res.status(500).json({ error: "Failed to update order status" });
+      }
+      res.status(200).json({ message: "Order status updated" });
+    }
+  );
+});
+
+
+
+
+
+// Chatbot API endpoint
+// app.post("/chatbot", (req, res) => {  
+//   res.json({ response: "Hello! How can I help?" });
+// });
+// app.post("/chatbot", (req, res) => {
+//   const { user_id, message } = req.body;
+//   if (!user_id || !message) {
+//       return res.status(400).json({ error: "User ID and message are required." });
+//   }
+
+//   const query = "SELECT response FROM chat WHERE message = ?";
+//   db.query(query, [message], (err, result) => {
+//       if (err) {
+//           console.error(err);
+//           return res.status(500).json({ error: "Database error." });
+//       }
+
+//       if (result.length === 0) {
+//           return res.json({ response: "Sorry, I don't understand that question." });
+//       }
+
+//       const response = result[0].response;
+      
+//       // Insert into chat_data
+//       const insertQuery = `INSERT INTO chat_data (user_id, interaction_date, message, response) VALUES (?, NOW(), ?, ?)`;
+//       db.query(insertQuery, [user_id, message, response], (insertErr) => {
+//           if (insertErr) {
+//               console.error(insertErr);
+//               return res.status(500).json({ error: "Failed to log chat data." });
+//           }
+//           res.json({ response });
+//       });
+//   });
+// });
+// app.post('/chatbot', async (req, res) => {
+//   const { message, user_id } = req.body;
+
+//   // Query the database to get the response based on the message
+//   db.query('SELECT response FROM chat WHERE message = ?', [message], (err, results) => {
+//       if (err) {
+//           console.error("Database query error:", err);
+//           return res.status(500).json({ response: "Sorry, there was an error processing your request." });
+//       }
+
+//       if (results.length > 0) {
+//           const response = results[0].response;
+
+//           // Log the chat data to the chat_data table
+//           const interactionDate = new Date().toISOString();
+//           db.query(
+//               'INSERT INTO chat_data (user_id, interaction_date, message, response) VALUES (?, ?, ?, ?)',
+//               [user_id, interactionDate, message, response],
+//               (err) => {
+//                   if (err) {
+//                       console.error("Error logging interaction:", err);
+//                   }
+//               }
+//           );
+
+//           // Send the response back to the frontend
+//           return res.json({ response });
+//       } else {
+//           return res.json({ response: "Sorry, I didn't understand that." });
+//       }
+//   });
+// });
+app.post('/chatbot', async (req, res) => {
+  const { message, user_id } = req.body;
+
+  console.log("Received message:", message);
+  console.log("Received user_id:", user_id);
+
+  if (!message || !user_id) {
+      return res.status(400).json({ response: "Invalid request. Message and user_id are required." });
+  }
+
+  db.query('SELECT response FROM chat WHERE message = ?', [message], (err, results) => {
+      if (err) {
+          console.error("Database query error:", err);
+          return res.status(500).json({ response: "Sorry, there was an error processing your request." });
+      }
+
+      console.log("Query results:", results);
+
+      if (results.length > 0) {
+          const response = results[0].response;
+          console.log("Chatbot response:", response);
+          const interactionDate = new Date().toISOString();
+
+          // Log the chat data to the chat_data table
+          db.query(
+              'INSERT INTO chat_data (user_id, interaction_date, message, response) VALUES (?, ?, ?, ?)',
+              [user_id, interactionDate, message, response],
+              (err) => {
+                  if (err) {
+                      console.error("Error logging interaction:", err);
+                  }
+              }
+          );
+
+          return res.json({ response });
+      } else {
+          console.log("No matching response found for:", message);
+          return res.json({ response: "Sorry, I didn't understand that." });
+      }
+  });
+});
+
+
+
+
+
+// API route to get a single product
+app.get("/products/id", async (req, res) => {
+  const { id } = req.params;
+  const product = await db.query("SELECT * FROM product WHERE id = ?", [id]); // MySQL Example
+  res.json(product[0]); 
+});
+app.get("/products/id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [rows] = await pool.query("SELECT * FROM product WHERE id = ?", [id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Database query error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+
 app.listen(PORT, () => {
-    console.log('Server is running on port');
+    console.log(`Server is running on port ${PORT}`);
   });
 
-
-// this is chatbot 
-app.post("/chatbot", (req, res) => {  
-    res.json({ response: "Hello! How can I help?" });
-});

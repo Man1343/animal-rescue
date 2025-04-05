@@ -1,0 +1,41 @@
+.container {
+    padding: 20px;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .order-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .order-table th, .order-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .order-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .view-button {
+    padding: 5px 10px;
+    background-color: blue;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .view-button:hover {
+    background-color: darkblue;
+  }
+  
+  .error {
+    color: red;
+  }
+  

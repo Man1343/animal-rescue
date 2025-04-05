@@ -1,0 +1,33 @@
+.admin-container {
+    padding: 20px;
+  }
+  
+  .admin-title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .admin-order-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .admin-order-table th,
+  .admin-order-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .admin-order-table th {
+    background-color: #f4f4f4;
+  }
+  
+  .refresh-button {
+    padding: 5px 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  

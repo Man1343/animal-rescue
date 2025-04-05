@@ -1,0 +1,99 @@
+.order-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 25px;
+  background: linear-gradient(135deg, #ffffff, #f7f7f7);
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease-in-out;
+}
+
+.order-container:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+h1, h2 {
+  text-align: center;
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin: 12px 0;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.order-item:hover {
+  transform: scale(1.02);
+}
+
+.order-item button {
+  background: #ff5e00;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: 0.3s ease-in-out;
+}
+
+.order-item button:hover {
+  background: #ff3b00;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  background: #fff;
+  transition: 0.3s ease-in-out;
+}
+
+input:focus {
+  border-color: #ff5e00;
+  box-shadow: 0 0 5px rgba(255, 94, 0, 0.5);
+}
+
+button.place-order-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff6a00, #ff4500);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+button.place-order-btn:hover {
+  background: linear-gradient(135deg, #ff4500, #d62c00);
+}
+
+.total-price {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin: 15px 0;
+  color: #ff4500;
+}
+
+@media (max-width: 768px) {
+  .order-container {
+      max-width: 90%;
+      padding: 20px;
+  }
+}

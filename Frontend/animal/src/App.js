@@ -8,14 +8,20 @@ import About from './Components/LoginForm/About';
 import Contact from './Components/LoginForm/Contact';
 import Ratings from './Components/LoginForm/Ratings';
 // import Chatbot from './Components/LoginForm/Chatbot';
+import Petstore from './Components/LoginForm/Petstore';
+// import ProductDetails from './Components/LoginForm/ProductDetails';
+import Orderpage from './Components/LoginForm/OrderPage';
+import Userorders from './Components/LoginForm/UserOrders';
 
 import './App.css';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+// import { useState } from 'react';
 
 
 
 
 function App() {
+  // const userEmail = localStorage.getItem("userEmail");
   return (
     <div className='animal'>
       <Router>
@@ -29,6 +35,13 @@ function App() {
           <Route path='/About' element={<About/>}></Route>
           <Route path='/Contact' element={<Contact/>}></Route>
           <Route path='/Ratings' element={<Ratings/>}></Route>
+          <Route path='/Petstore' element={<Petstore/>}></Route>
+          <Route path='/Orderpage' element={<Orderpage/>}></Route>
+          {/* <Route path='/Userorders' element={<Userorders userEmail={userEmail} />} /> */}
+          <Route path="/Userorders" element={<Userorders />} />
+
+          {/* <Route path="/Userorders" element={userEmail ? <Userorders userEmail={userEmail} userId={userId} /> : <Login />} /> */}
+          {/* {userEmail && <Route path='/Userorders' element={<Userorders userEmail={userEmail} />} />} */}
         </Routes>
       </Router>
       {/* <Chatbot /> */}

@@ -20,6 +20,15 @@ const About = () => {
           case 'option4':
             navigate('/Adoptionview');
             break;
+          case 'option5':
+            navigate('/Petstore');
+            break;
+          case 'option6':
+            navigate('/Userorders');
+            break;
+          case 'option7':
+            navigate('/Ratings');
+            break;
           // Add more cases for additional options
           default:
             break;
@@ -37,7 +46,7 @@ const About = () => {
 
 <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm py-3 py-lg-0 px-3 px-lg-0">
             <Link to ="/Navbar" class="navbar-brand ms-lg-5">
-            <h1 class="m-0 text-uppercase text-dark"><i class="bi bi-shop fs-1 text-primary me-3"></i>Animal ResQ</h1>
+            <h1 class="m-0 text-uppercase text-dark"><i class="bi bi-shop fs-1 text-primary me-3"></i>Paw Protectors</h1>
              </Link>
 
        
@@ -51,6 +60,9 @@ const About = () => {
                         <option value="option2" className='nav-item nav-link'>Report Emergency</option>
                         <option value="option3" className='nav-item nav-link'>Adotion Post</option>
                         <option value="option4" className='nav-item nav-link'>Adoption View</option>
+                        <option value="option5" className='nav-item nav-link'>Petstore</option>
+                        <option value="option6" className='nav-item nav-link'>Orders</option>
+                        <option value="option7" className='nav-item nav-link'>Ratings</option>
                     </select>
                 
       
@@ -133,7 +145,7 @@ We provide several key programs to achieve our goals: spay/neuter, rabies vaccin
         <div class="container">
             <div class="row g-5">
             <div class="col-md-6 text-center text-md-start">
-                    <center><p class="mb-md-0" style={{color: "white"}}>&copy;Animal ResQ . All Rights Reserved.</p></center>
+                    <center><p class="mb-md-0" style={{color: "white"}}>&copy;Paw Protectors . All Rights Reserved.</p></center>
                 </div>
              
             </div>

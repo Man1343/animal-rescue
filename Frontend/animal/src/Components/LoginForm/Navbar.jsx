@@ -6,6 +6,7 @@ import Constant from '../../Constant';
 import axios from 'axios';
 import Modal from './ModalSignup';
 import Chatbot from './Chatbot';
+// import Petstore from './Petstore';
 
 
 
@@ -30,7 +31,15 @@ const Navbar = () => {
           case 'option4':
             navigate('/Adoptionview');
             break;
-            
+          case 'option5':
+            navigate('/Petstore');
+            break;
+          case 'option6':
+            navigate('/Userorders');
+            break;
+          case 'option7':
+            navigate('/Ratings');
+            break;
           // Add more cases for additional options
           default:
             break;
@@ -44,7 +53,13 @@ const Navbar = () => {
 		 axios.post(Constant.URLs.ApiUrl + '/Navbar',values)
 		.then(res => console.log("submited successfully"))
 		.catch(err => console.log(err));
-}
+      }
+      const handleLogout = () => {
+        localStorage.removeItem("userEmail");
+        // localStorage.clear();
+        navigate("/");
+      };
+      
   return (
     <div>  
          {modalOpen && <Modal setOpenModal={setModalOpen} />}
@@ -59,28 +74,32 @@ const Navbar = () => {
 
 <body>
    <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm py-3 py-lg-0 px-3 px-lg-0">
-            <a href="/Navbar" class="navbar-brand ms-lg-5">
+        <a href="/Navbar" class="navbar-brand ms-lg-5">
             {/* <h1 class="m-0 text-uppercase text-dark"><i class="bi bi-shop fs-1 text-primary me-3"></i>Animal ResQ</h1> */}
             <h1 class="m-0 text-uppercase text-dark"><i class="bi bi-shop fs-1 text-primary me-3"></i>Paw Protectors</h1>
-             </a>
+        </a>
 
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto py-0">
                 <Link to ='/Navbar' class="nav-item nav-link ">Home</Link>
                 <Link to ='/about' className='nav-item nav-link '>about</Link>
                 <Link to ='/Contact' class="nav-item nav-link">Contact</Link>
+    
+                <select onChange={handleChange} className='nav-item nav-link' style={{border: "none"}}>
+                    <option value="option1">Select Your Option</option>
+                    <option value="option2">Report Emergency</option>
+                    <option value="option3">Adotion Post</option>
+                    <option value="option4">Adoption View</option>
+                    <option value="option5">Petstore</option>
+                    <option value="option6">Orders</option>
+                    <option value="option7">Ratings</option>
+                </select>
         
-                    <select onChange={handleChange} className='nav-item nav-link' style={{border: "none"}}>
-                        <option value="option1">Select Your Option</option>
-                        <option value="option2">Report Emergency</option>
-                        <option value="option3">Adotion Post</option>
-                        <option value="option4">Adoption View</option>
-                      
-                    </select>
-           
-                
-        </div>
-            <Link to ='/' class="nav-item nav-link"><MdLogout className='ommm'/></Link>
+            
+            </div>
+            <div class="nav-item nav-link" onClick={handleLogout}><MdLogout className='ommm'/></div>
+            {/* <button onClick={handleLogout} className="logout-button">Logout</button> */}
+            {/* <Link to ='/' class="nav-item nav-link"><MdLogout className='ommm'/></Link> */}
         </div>
     </nav>
     
