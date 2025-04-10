@@ -21,6 +21,9 @@ export default function PetStore() {
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const navigate = useNavigate();
+  const [showMessage, setShowMessage] = useState(false);
+  const [messageText, setMessageText] = useState("");
+
 
   const [values,setValues] = useState({});
 
@@ -59,6 +62,11 @@ export default function PetStore() {
         return [...prevCart, { ...product, qty: 1 }];
       }
     });
+    setMessageText(`${product.name} added to cart!`);
+    setShowMessage(true);
+    setTimeout(() => {
+      setShowMessage(false);
+    }, 4000); // 4 seconds
   };
 
   const toggleCart = () => {
@@ -99,10 +107,13 @@ export default function PetStore() {
 
   return (
     <div>
+    {showMessage && (
+      <div className="popup-message">
+        {messageText}
+      </div>
+    )}
 
-      <link href="img/favicon.ico" rel="icon"/>
-
-    
+    <link href="img/favicon.ico" rel="icon"/>
     <link rel="preconnect" href="https://fonts.gstatic.com"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto:wght@700&display=swap" rel="stylesheet"/>  
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"/>
