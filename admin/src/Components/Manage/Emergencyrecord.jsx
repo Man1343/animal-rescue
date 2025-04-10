@@ -55,12 +55,12 @@ const Emergencyrecord = () => {
      <br></br>
      <div>
      <center>
-        <table style={{color:"black"}} border={'3px'} width={'80%'}>
+        <table style={{color:"black"}} border={'3px'} width={'90%'}>
         <tr style={rowStyle}>
-           <th className='emer'>Accepted_id</th>
+           {/* <th className='emer'>Accepted_id</th> */}
             <th className='emer'> Address of Emergency</th>
-        <th className='emer'>Contact of User</th>
-          <th className='emer'>Date and Time</th>
+        {/* <th className='emer'>Contact of User</th> */}
+          <th className='emer'>Date</th>
        <th className='emer'>Email of User</th>
            <th className='emer'>Name of Shelter</th>
            <center><th className='emer'>Address of Shelter</th></center> 
@@ -70,17 +70,18 @@ const Emergencyrecord = () => {
         mydata.map( user => {
             return (
                 <tr style={rowStyle}>
-                    <td className='emer'>
+                    {/* <td className='emer'>
                    <center>{user.accepted_id} </center> 
-                    </td>
+                    </td> */}
                     <td className='emer'>
                     {user.address} 
                     </td>
-                   <td className='emer'>
+                   {/* <td className='emer'>
                      {user.contact}
-                    </td>
+                    </td> */}
                     <td className='emer'>
-                    {user.date}
+                    {/* {user.date} */}
+                     {user.date?.split('T')[0]}
                     </td>
                     <td className='emer'>
                    <center>{user.email}</center> 
@@ -150,7 +151,7 @@ const Emergencyrecord = () => {
         <div class="container">
             <div class="row g-5">
             <div class="col-md-6 text-center text-md-start">
-                    <center><p class="mb-md-0">&copy; <p class="text-white" href="#">Animal ResQ . All Rights Reserved.</p></p></center>
+                    <center><p class="mb-md-0">&copy; <p class="text-white" href="#">Paw Protectors . All Rights Reserved.</p></p></center>
                 </div>
              
             </div>

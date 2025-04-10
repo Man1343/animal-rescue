@@ -38,6 +38,9 @@ const Ratings = () => {
           case 'option6':
             navigate('/Userorders');
             break;
+          case 'option7':
+            navigate('/Userprofile');
+            break;
           default:
             break;
         }
@@ -65,7 +68,7 @@ const Ratings = () => {
   return (
     <div>
 
-         <link href="img/favicon.ico" rel="icon"/>
+    <link href="img/favicon.ico" rel="icon"/>
     <link rel="preconnect" href="https://fonts.gstatic.com"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&family=Roboto:wght@700&display=swap" rel="stylesheet"/>  
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"/>
@@ -87,11 +90,12 @@ const Ratings = () => {
                 <select onChange={handleChange} className='nav-item nav-link' style={{border: "none"}}>
                         <option value="option1" className='nav-item nav-link'>Select Your Option</option>
                         <option value="option2" className='nav-item nav-link'>Report Emergency</option>
-                        <option value="option3" className='nav-item nav-link'>Adotion Post</option>
+                        {/* <option value="option3" className='nav-item nav-link'>Adotion Post</option> */}
                         <option value="option4" className='nav-item nav-link'>Adoption View</option>
                         <option value="option5" className='nav-item nav-link'>Petstore</option>
                         <option value="option6" className='nav-item nav-link'>Orders</option>
                         {/* <option value="option5" className='nav-item nav-link'>Ratings</option> */}
+                        <option value="option7" className='nav-item nav-link'>User Profile</option>
                     </select>
         </div>
             <Link to ='/' class="nav-item nav-link"><MdLogout className='ommm'/></Link>

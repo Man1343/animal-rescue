@@ -33,10 +33,12 @@ const Viewemergency = () => {
           case 'option3':
             navigate('/Adoptionpost');
             break;
-            case 'option4':
+          case 'option4':
             navigate('/Viewratings');
             break;
-
+          case 'option5':
+            navigate('/Shelterprofile');
+            break;
           // Add more cases for additional options
           default:
             break;
@@ -102,9 +104,10 @@ const Viewemergency = () => {
                 <Link to ='/Contact' class="nav-item nav-link">Contact</Link>
                 <select onChange={handleChange} className='nav-item nav-link' style={{border: "none"}}>
                         <option value="option1" className='nav-item nav-link'>Select Your Option</option>
-                        <option value="option2" className='nav-item nav-link'>View Emergency</option>
+                        {/* <option value="option2" className='nav-item nav-link'>View Emergency</option> */}
                         <option value="option3" className='nav-item nav-link'>Adotion Post</option>
                         <option value="option4" className='nav-item nav-link'>View Ratings</option>
+                        <option value="option5" className='nav-item nav-link'>Shelter Profile</option>
                     </select>
             </div>
             <Link to ='/' class="nav-item nav-link"><MdLogout className='ommm'/></Link>
@@ -113,7 +116,7 @@ const Viewemergency = () => {
     <div className='em'>
 <div className='emerr'>
     <center>
-        <table style={{color:"black"}} border={'3px'} width={'80%'}>
+        <table style={{color:"black"}} border={'3px'} width={'90%'}>
         <tr>
             <th className='emer'>Address</th>
             <th className='emer'>contact</th>
@@ -139,7 +142,8 @@ const Viewemergency = () => {
                      {data.email}
                     </td>
                     <td className='emer'>
-                    {data.date}
+                    {/* {data.date} */}
+                     {data.date?.split('T')[0]}
                     </td>
                     <td className='emer'>
                     

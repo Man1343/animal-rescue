@@ -40,6 +40,9 @@ const Navbar = () => {
           case 'option7':
             navigate('/Ratings');
             break;
+          case 'option8':
+            navigate('/Userprofile');
+            break;
           // Add more cases for additional options
           default:
             break;
@@ -88,11 +91,12 @@ const Navbar = () => {
                 <select onChange={handleChange} className='nav-item nav-link' style={{border: "none"}}>
                     <option value="option1">Select Your Option</option>
                     <option value="option2">Report Emergency</option>
-                    <option value="option3">Adotion Post</option>
+                    {/* <option value="option3">Adotion Post</option> */}
                     <option value="option4">Adoption View</option>
                     <option value="option5">Petstore</option>
                     <option value="option6">Orders</option>
                     <option value="option7">Ratings</option>
+                    <option value="option8">User Profile</option>
                 </select>
         
             

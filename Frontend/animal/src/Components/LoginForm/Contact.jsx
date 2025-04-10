@@ -74,7 +74,7 @@ const Contact = () => {
                 <select onChange={handleChange} className='nav-item nav-link' style={{border: "none"}}>
                         <option value="option1" className='nav-item nav-link'>Select Your Option</option>
                         <option value="option2" className='nav-item nav-link'>Report Emergency</option>
-                        <option value="option3" className='nav-item nav-link'>Adotion Post</option>
+                        {/* <option value="option3" className='nav-item nav-link'>Adotion Post</option> */}
                         <option value="option4" className='nav-item nav-link'>Adoption View</option>
                         <option value="option5" className='nav-item nav-link'>Petstore</option>
                         <option value="option6" className='nav-item nav-link'>Orders</option>

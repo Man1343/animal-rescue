@@ -38,9 +38,12 @@ const Adoptionpost = () => {
           case 'option3':
             navigate('/Adoptionpost');
             break;
-            case 'option4':
+          case 'option4':
               navigate('/Viewratings');
               break;
+          case 'option5':
+            navigate('/Shelterprofile');
+            break;
           // Add more cases for additional options
           default:
             break;
@@ -110,8 +113,9 @@ const Adoptionpost = () => {
                 <select onChange={handleChange} className='nav-item nav-link' style={{border: "none"}}>
                         <option value="option1" className='nav-item nav-link'>Select Your Option</option>
                         <option value="option2" className='nav-item nav-link'>View Emergency</option>
-                        <option value="option3" className='nav-item nav-link'>Adotion Post</option>
+                        {/* <option value="option3" className='nav-item nav-link'>Adotion Post</option> */}
                         <option value="option4" className='nav-item nav-link'>View Ratings</option>
+                        <option value="option5" className='nav-item nav-link'>Shelter Profile</option>
                     </select>
             
 

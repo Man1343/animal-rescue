@@ -28,8 +28,11 @@ const Navbar= () => {
           case 'option3':
             navigate('/Adoptionpost');
             break;
-            case 'option4':
+          case 'option4':
             navigate('/Viewratings');
+            break;
+          case 'option5':
+            navigate('/Shelterprofile');
             break;
           // Add more cases for additional options
           default:
@@ -44,6 +47,11 @@ const Navbar= () => {
 		.then(res => console.log("submited successfully"))
 		.catch(err => console.log(err));
 }
+    const handleLogout = () => {
+        localStorage.removeItem("userEmail");
+        // localStorage.clear();
+        navigate("/");
+    };
 
   return (
     <div>
@@ -89,10 +97,12 @@ const Navbar= () => {
                         <option value="option2">View Emergency</option>
                         <option value="option3">Adotion Post</option>
                         <option value="option4">View Ratings</option>
+                        <option value="option5">Shelter Profile</option>
                     </select>
 
         </div>
-            <Link to ='/' class="nav-item nav-link"><MdLogout className='ommm'/></Link>
+            <div class="nav-item nav-link" onClick={handleLogout}><MdLogout className='ommm'/></div>
+            {/* <Link to ='/' class="nav-item nav-link"><MdLogout className='ommm'/></Link> */}
         </div>
     </nav>
     

@@ -82,7 +82,8 @@ const Shelter = () => {
             return (
                 <tr style={rowStyle}>
                     <td className='emer'>
-                    {user.unique_id} 
+                    {/* {user.unique_id}  */}
+                    {user.shelter_id}
                     </td>
                     <td className='emer'>
                     {user.shelter_name} 
@@ -167,7 +168,7 @@ const Shelter = () => {
             <div class="container">
                 <div class="row g-5">
                 <div class="col-md-6 text-center text-md-start">
-                        <center><p class="mb-md-0">&copy; <p class="text-white" href="#">Animal ResQ . All Rights Reserved.</p></p></center>
+                        <center><p class="mb-md-0">&copy; <p class="text-white" href="#">Paw Protectors . All Rights Reserved.</p></p></center>
                     </div>
                  
                 </div>

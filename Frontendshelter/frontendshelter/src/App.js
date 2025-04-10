@@ -7,6 +7,7 @@ import Contact from './Components/LoginForm/Contact'
 import Viewratings from './Components/LoginForm/Viewratings';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Navbar from './Components/LoginForm/Navbar';
+import Shelterprofile from './Components/LoginForm/ShelterProfile';
 import './App.css';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path='/About' element={<About/>}></Route>
           <Route path='/Contact' element={<Contact/>}></Route>
           <Route path='/Viewratings' element={<Viewratings/>}></Route>
+          <Route path='/Shelterprofile' element={<Shelterprofile />}></Route>
           </Routes>
           </Router>
     </div>

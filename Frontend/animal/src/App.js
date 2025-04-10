@@ -12,6 +12,7 @@ import Petstore from './Components/LoginForm/Petstore';
 // import ProductDetails from './Components/LoginForm/ProductDetails';
 import Orderpage from './Components/LoginForm/OrderPage';
 import Userorders from './Components/LoginForm/UserOrders';
+import Userprofile from './Components/LoginForm/UserProfile';
 
 import './App.css';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
@@ -39,9 +40,9 @@ function App() {
           <Route path='/Orderpage' element={<Orderpage/>}></Route>
           {/* <Route path='/Userorders' element={<Userorders userEmail={userEmail} />} /> */}
           <Route path="/Userorders" element={<Userorders />} />
-
           {/* <Route path="/Userorders" element={userEmail ? <Userorders userEmail={userEmail} userId={userId} /> : <Login />} /> */}
           {/* {userEmail && <Route path='/Userorders' element={<Userorders userEmail={userEmail} />} />} */}
+          <Route path='/Userprofile' element={<Userprofile />} />
         </Routes>
       </Router>
       {/* <Chatbot /> */}

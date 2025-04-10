@@ -103,7 +103,7 @@ export default function AdminOrders() {
               <tr key={order.order_id}>
                 <td>{order.order_id}</td>
                 <td>{order.email}</td>
-                <td>{new Date(order.order_date).toLocaleString()}</td>
+                <td>{new Date(order.order_date).toISOString().split('T')[0]}</td>
                 {/* <td>{JSON.parse(order.order_items).length}</td> */}
                 <td>{order.order_items}</td>
                 <td>₹{order.total_amount}</td>
@@ -174,7 +174,7 @@ export default function AdminOrders() {
         <div class="container">
             <div class="row g-5">
             <div class="col-md-6 text-center text-md-start">
-                    <center><p class="mb-md-0">&copy; <p class="text-white" href="#">Animal ResQ . All Rights Reserved.</p></p></center>
+                    <center><p class="mb-md-0">&copy; <p class="text-white" href="#">Paw Protectors . All Rights Reserved.</p></p></center>
                 </div>
              
             </div>

@@ -50,6 +50,9 @@ const Reportemergency = () => {
             case 'option7':
               navigate('/Ratings');
               break;
+            case 'option8':
+              navigate('/Userprofile');
+              break;
             default:
               break;
           }
@@ -92,7 +95,7 @@ const Reportemergency = () => {
     
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm py-3 py-lg-0 px-3 px-lg-0">
             <a href="/Navbar" class="navbar-brand ms-lg-5">
-            <h1 class="m-0 text-uppercase text-dark"><i class="bi bi-shop fs-1 text-primary me-3"></i>Animal ResQ</h1>
+            <h1 class="m-0 text-uppercase text-dark"><i class="bi bi-shop fs-1 text-primary me-3"></i>Paw Protectors</h1>
              </a>
 
        
@@ -103,12 +106,13 @@ const Reportemergency = () => {
                 <Link to ='/Contact' class="nav-item nav-link">Contact</Link>
                 <select onChange={handleChange} className='nav-item nav-link' style={{border: "none"}}>
                         <option value="option1" className='nav-item nav-link'>Select Your Option</option>
-                        <option value="option2" className='nav-item nav-link'>Report Emergency</option>
-                        <option value="option3" className='nav-item nav-link'>Adotion Post</option>
+                        {/* <option value="option2" className='nav-item nav-link'>Report Emergency</option> */}
+                        {/* <option value="option3" className='nav-item nav-link'>Adotion Post</option> */}
                         <option value="option4" className='nav-item nav-link'>Adoption View</option>
                         <option value="option5" className='nav-item nav-link'>Petstore</option>
                         <option value="option6" className='nav-item nav-link'>Orders</option>
                         <option value="option7" className='nav-item nav-link'>Ratings</option>
+                        <option value="option8" className='nav-item nav-link'>User Profile</option>
                        
                     </select>
         </div>
@@ -190,7 +194,7 @@ const Reportemergency = () => {
         <div class="container">
             <div class="row g-5">
             <div class="col-md-6 text-center text-md-start">
-                    <center><p class="mb-md-0" style={{color: "white"}}>&copy;Animal ResQ . All Rights Reserved.</p></center>
+                    <center><p class="mb-md-0" style={{color: "white"}}>&copy;Paw Protectors . All Rights Reserved.</p></center>
                 </div>
              
             </div>

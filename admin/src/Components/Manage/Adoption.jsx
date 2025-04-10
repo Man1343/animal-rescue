@@ -68,8 +68,8 @@ const Adoption = () => {
     <center>
         <table style={{color:"black"}} border={'3px'} width={'80%'}>
         <tr style={rowStyle}>
-         <th className='emerr'>Animal ID</th>
-            <th className='emerr'> Unique_ID</th>
+         <th className='emerr'>Animal_ID</th>
+            <th className='emerr'> Shelter_ID</th>
             <th className='emerr'>Animal Name</th>
             <th className='emerr'>Species</th>
             <th className='emerr'>Age</th>
@@ -87,7 +87,7 @@ const Adoption = () => {
                     {user.animal_id} 
                     </td>
                     <td className='emerr'>
-                     {user.unique_id}
+                     {user.shelter_id}
                     </td>
                     <td className='emerr'>
                      {user.animal_name}
@@ -167,7 +167,7 @@ const Adoption = () => {
         <div class="container">
             <div class="row g-5">
             <div class="col-md-6 text-center text-md-start">
-                    <center><p class="mb-md-0">&copy; <p class="text-white" href="#">Animal ResQ . All Rights Reserved.</p></p></center>
+                    <center><p class="mb-md-0">&copy; <p class="text-white" href="#">Paw Protectors . All Rights Reserved.</p></p></center>
                 </div>
              
             </div>

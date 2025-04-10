@@ -244,7 +244,7 @@ app.post('/Reportemergency',uploadFile.single('image'),(req, res) => {
       return res.json('no record');
     }
     const user = results[0];
-    const lastLoginTime = new Date();
+    const lastLoginTime = new Date().toISOString().split('T')[0];
     const img = imageBasePath + "/" +image;
     // const logLastLoginSql = 'INSERT INTO emergency_report (`unique_id`, `address`, `contact`, `photo_url`, `date`, `email`) VALUES (?, ?, ?, ?, ?,?)';
     const logLastLoginSql = 'INSERT INTO emergency_report (`user_id`, `address`, `contact`, `photo_url`, `date`, `email`) VALUES (?, ?, ?, ?, ?,?)';
@@ -276,7 +276,8 @@ app.post('/login', (req, res) => {
       return res.json({ success: false, message: 'No record found' });
     }
     const user = results[0];
-    const lastLoginTime = new Date().toISOString();
+    // const lastLoginTime = new Date().toISOString();
+    const lastLoginTime = new Date().toISOString().split('T')[0]; //gets only YYYY-MM-DD
     // const logLastLoginSql = 'INSERT INTO user_activity (unique_id, email, login_time) VALUES (?, ?, ?)';
     const logLastLoginSql = 'INSERT INTO user_activity (user_id, email, login_time) VALUES (?, ?, ?)';
     db.query(logLastLoginSql, [user.user_id, email, lastLoginTime], (logErr) => {
@@ -373,7 +374,8 @@ app.post('/loginn', (req, res) => {
     }
 
     const user = results[0];
-    const lastLoginTime = new Date().toISOString(); // Local time of the server
+    // const lastLoginTime = new Date().toISOString(); // Local time of the server
+    const lastLoginTime = new Date().toISOString().split('T')[0]; // Gets only YYYY-MM-DD
 
     // const logLastLoginSql = 'INSERT INTO shelter_activity (unique_id, mobile_no, email, login_time, shelter_name, shelter_address) VALUES (?, ?, ?, ?, ?, ?)';
     const logLastLoginSql = 'INSERT INTO shelter_activity (shelter_id, mobile_no, email, login_time, shelter_name, shelter_address) VALUES (?, ?, ?, ?, ?, ?)';
@@ -857,7 +859,8 @@ app.post('/api/acceptRecord', (req, res) => {
   const { address, contact, date, email, shelter_name, shelter_address, mobile_no } = req.body;
 
   // Adjust the date format to 'YYYY-MM-DD HH:MM:SS'
-  const formattedDate = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+  // const formattedDate = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+  const formattedDate = new Date(date).toISOString().split('T')[0];
 
   if (!address || !contact || !formattedDate || !email || !shelter_name || !shelter_address || !mobile_no) {
     return res.status(400).json({ success: false, message: 'All fields are required' });
@@ -955,14 +958,76 @@ app.get("/products", (req, res) => {
 //     });
 //   });
 // });
-app.post("/place-order", (req, res) => {
-  const { email, address, card_number, products } = req.body;
+// this one you used last time before cash on delivery
+// app.post("/place-order", (req, res) => {
+//   const { email, address, card_number, products } = req.body;
 
-  if (!email || !address || !card_number || !products || products.length === 0) {
-    return res.status(400).json({ error: "Missing order details" });
+//   if (!email || !address || !card_number || !products || products.length === 0) {
+//     return res.status(400).json({ error: "Missing order details" });
+//   }
+
+//   // Fetch user_id from user_activity
+//   db.query("SELECT user_id FROM user_activity WHERE email = ?", [email], (err, userResult) => {
+//     if (err) {
+//       console.error("Error fetching user:", err);
+//       return res.status(500).json({ error: "Database error" });
+//     }
+
+//     if (!userResult || userResult.length === 0) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+//     const user_id = userResult[0].user_id;
+//     // const order_date = new Date().toISOString().slice(0, 19).replace("T", " "); // Format YYYY-MM-DD HH:MM:SS
+//     const order_date = new Date().toISOString().split('T')[0];
+//     const status = "Pending"; // Default status
+//     const orderId = `ORD${Date.now()}`; // Unique order ID
+
+//     // Calculate total amount & total number of products
+//     let totalAmount = 0;
+//     let totalProducts = 0;
+
+//     products.forEach((item) => {
+//       totalAmount += item.price * item.qty; // Total price
+//       totalProducts += item.qty; // Total number of items
+//     });
+
+//     // Insert **total number of products** in `order_items`
+//     const orderQuery = `
+//       INSERT INTO order_data (order_id, user_id, email, order_date, ship_address, status, order_items, total_amount, card_no)
+//       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+//     `;
+
+//     db.query(orderQuery, [orderId, user_id, email, order_date, address, status, totalProducts, totalAmount, card_number], (err, result) => {
+//       if (err) {
+//         console.error("Error inserting order:", err);
+//         return res.status(500).json({ error: "Failed to place order" });
+//       }
+
+//       res.status(200).json({
+//         success: true,
+//         message: "Order placed successfully",
+//         order_id: orderId,
+//         total_products: totalProducts, // Return total number of products
+//       });
+//     });
+//   });
+// });
+app.post("/place-order", (req, res) => {
+  const { email, address, card_number, expiry_date, cvv, payment_mode, products } = req.body;
+  
+  console.log("Received body:", req.body);
+  if (!email || !address || !payment_mode || !products || products.length === 0) {
+    return res.status(400).json({ error: "Missing required order details" });
   }
 
-  // Fetch user_id from user_activity
+  // Card details required only for card-based payments
+  if (payment_mode !== "Cash on Delivery") {
+    if (!card_number || !expiry_date || !cvv) {
+      return res.status(400).json({ error: "Card details are required for card payments" });
+    }
+  }
+
   db.query("SELECT user_id FROM user_activity WHERE email = ?", [email], (err, userResult) => {
     if (err) {
       console.error("Error fetching user:", err);
@@ -974,40 +1039,47 @@ app.post("/place-order", (req, res) => {
     }
 
     const user_id = userResult[0].user_id;
-    const order_date = new Date().toISOString().slice(0, 19).replace("T", " "); // Format YYYY-MM-DD HH:MM:SS
-    const status = "Pending"; // Default status
-    const orderId = `ORD${Date.now()}`; // Unique order ID
+    const order_date = new Date().toISOString().split('T')[0];
+    const status = "Pending";
+    const orderId = `ORD${Date.now()}`;
 
-    // Calculate total amount & total number of products
     let totalAmount = 0;
     let totalProducts = 0;
 
     products.forEach((item) => {
-      totalAmount += item.price * item.qty; // Total price
-      totalProducts += item.qty; // Total number of items
+      totalAmount += item.price * item.qty;
+      totalProducts += item.qty;
     });
 
-    // Insert **total number of products** in `order_items`
     const orderQuery = `
-      INSERT INTO order_data (order_id, user_id, email, order_date, ship_address, status, order_items, total_amount, card_no)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO order_data 
+      (order_id, user_id, email, order_date, ship_address, status, order_items, total_amount, card_no, expiry_date, cvv, payment_mode)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(orderQuery, [orderId, user_id, email, order_date, address, status, totalProducts, totalAmount, card_number], (err, result) => {
+    db.query(orderQuery, [
+      orderId, user_id, email, order_date, address, status,
+      totalProducts, totalAmount,
+      payment_mode !== "Cash on Delivery" ? card_number : null,
+      payment_mode !== "Cash on Delivery" ? expiry_date : null,
+      payment_mode !== "Cash on Delivery" ? cvv : null,
+      payment_mode
+    ], (err, result) => {
       if (err) {
         console.error("Error inserting order:", err);
         return res.status(500).json({ error: "Failed to place order" });
       }
-
+      console.log(result);
       res.status(200).json({
         success: true,
         message: "Order placed successfully",
         order_id: orderId,
-        total_products: totalProducts, // Return total number of products
+        total_products: totalProducts,
       });
     });
   });
 });
+
 
 // get orders of the particular user
 app.get("/orders/:email", (req, res) => {
@@ -1151,7 +1223,8 @@ app.post('/chatbot', async (req, res) => {
       if (results.length > 0) {
           const response = results[0].response;
           console.log("Chatbot response:", response);
-          const interactionDate = new Date().toISOString();
+          // const interactionDate = new Date().toISOString();
+          const interactionDate = new Date().toISOString().split('T')[0];
 
           // Log the chat data to the chat_data table
           db.query(
@@ -1171,6 +1244,106 @@ app.post('/chatbot', async (req, res) => {
       }
   });
 });
+
+// api to get the user data for updation
+app.get('/user-details/:email', (req, res) => {
+  const { email } = req.params;
+
+  db.query('SELECT first_name AS name, mobile_no AS phone FROM registration_user WHERE email = ?', [email], (err, results) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(results[0]); // { name: ..., phone: ... }
+  });
+});
+
+// api to update user data by email
+app.put('/update-user/:email', (req, res) => {
+  const { email } = req.params;
+  const { name, phone } = req.body;
+
+  // Validation: Check for empty or null fields
+  if (!name || !phone || name.trim() === '' || phone.trim() === '') {
+    return res.status(400).json({ error: "Name and phone number are required and cannot be empty." });
+  }
+
+  db.query(
+    'UPDATE registration_user SET first_name = ?, mobile_no = ? WHERE email = ?',
+    [name.trim(), phone.trim(), email],
+    (err, result) => {
+      if (err) {
+        console.error("Update error:", err);
+        return res.status(500).json({ error: "Failed to update user" });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "No user updated. Check email." });
+      }
+
+      res.json({ message: "User updated successfully" });
+    }
+  );
+});
+
+
+// API to fetch shelter details by email
+app.get('/shelter-details/:email', (req, res) => {
+  const { email } = req.params;
+
+  db.query(
+    'SELECT shelter_name AS name, mobile_no AS phone, shelter_address AS address FROM registration_shelter WHERE email = ?',
+    [email],
+    (err, results) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "Shelter not found" });
+      }
+
+      res.json(results[0]); // { name: ..., phone: ... }
+    }
+  );
+});
+
+// API to update shelter data by email
+app.put('/update-shelter/:email', (req, res) => {
+  const { email } = req.params;
+  const { name, phone, address } = req.body;
+
+  // Basic validation
+  if (!name || !phone || !address || name.trim() === '' || phone.trim() === '' || address.trim() === '') {
+    return res.status(400).json({ error: "Name and phone number are required and cannot be empty." });
+  }
+
+  db.query(
+    'UPDATE registration_shelter SET shelter_name = ?, mobile_no = ?, shelter_address = ? WHERE email = ?',
+    [name.trim(), phone.trim(), address.trim(), email],
+    (err, result) => {
+      if (err) {
+        console.error("Update error:", err);
+        return res.status(500).json({ error: "Failed to update shelter" });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "No shelter updated. Check email." });
+      }
+
+      res.json({ message: "Shelter updated successfully" });
+    }
+  );
+});
+
+
+
 
 
 

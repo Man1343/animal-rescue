@@ -33,6 +33,9 @@ import Validation from './LoginValidation';
       
               if (res.data === 'login successfully') {
                 navigate('/Navbar');
+                localStorage.setItem("shelterEmail", values.email);
+                console.log("shelterEmail:", values.email);
+                console.log("Navigated to home page");
               } else {
                 alert('No record');
               }

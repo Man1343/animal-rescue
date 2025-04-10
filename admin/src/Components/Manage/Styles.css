@@ -127,7 +127,7 @@
   background: url(../Manage/hero.jpg);
   }
   
-  {/*
+  /*
   .container {
     position: relative;
   }
@@ -140,7 +140,7 @@
     width: 900px;
     height: 45vh;
     /* Add any other styling as needed */
-  }
+  
   */
   
   .logo {
@@ -294,7 +294,7 @@
   
 
 .emer {
- padding: 40px;
+ padding: 20px;
 }
 .emerr {
   padding: 30px;

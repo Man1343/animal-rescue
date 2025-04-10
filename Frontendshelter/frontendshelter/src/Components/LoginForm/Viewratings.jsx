@@ -23,8 +23,11 @@ const Viewratings = () => {
           case 'option3':
             navigate('/Adoptionpost');
             break;
-            case 'option4':
+          case 'option4':
             navigate('/Viewratings');
+            break;
+          case 'option5':
+            navigate('/Shelterprofile');
             break;
           // Add more cases for additional options
           default:
@@ -67,7 +70,8 @@ const Viewratings = () => {
                         <option value="option1">Select Your Option</option>
                         <option value="option2">View Emergency</option>
                         <option value="option3">Adotion Post</option>
-                        <option value="option4">View Ratings</option>
+                        {/* <option value="option4">View Ratings</option> */}
+                        <option value="option5">Shelter Profile</option>
                     </select>
 
         </div>

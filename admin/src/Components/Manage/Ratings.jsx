@@ -75,8 +75,8 @@ const Viewratings = () => {
     <center>
         <table style={{color:"black"}} border={'3px'} width={'80%'}>
         <tr style={rowStyle}>
-            <th className='emerr'>ID</th>
-            <th className='emerr'>User id</th>
+            <th className='emerr'>Rating_ID</th>
+            <th className='emerr'>User_ID</th>
             <th className='emerr'>Email</th>
             <th className='emerr'>Feedback</th>
             <th className='emerr'>Manage</th>
@@ -86,10 +86,10 @@ const Viewratings = () => {
             return (
                 <tr style={rowStyle}   >
                     <td className='emerr'>
-                    {user.id} 
+                    {user.rating_id} 
                     </td>
                     <td className='emerr'>
-                     {user.unique_id}
+                     {user.user_id}
                     </td>
                     <td className='emerr'>
                      {user.email}
@@ -163,7 +163,7 @@ const Viewratings = () => {
         <div class="container">
             <div class="row g-5">
             <div class="col-md-6 text-center text-md-start">
-                    <center><p class="mb-md-0">&copy; <p class="text-white" >Animal ResQ . All Rights Reserved.</p></p></center>
+                    <center><p class="mb-md-0">&copy; <p class="text-white" >Paw Protectors . All Rights Reserved.</p></p></center>
                 </div>
              
             </div>

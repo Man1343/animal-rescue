@@ -16,12 +16,14 @@ const Record = () => {
     useEffect(() => {
         // Fetch last unique_id from registration_user table
         axios.get('http://localhost:8081/api/userUniqueId') // Update the URL with the correct port
-          .then(response => setUserUniqueId(response.data.unique_id))
+          // .then(response => setUserUniqueId(response.data.unique_id))
+          .then(response => setUserUniqueId(response.data.user_id))
           .catch(error => console.error('Error fetching user unique_id:', error));
     
         // Fetch last unique_id from registration_shelter table
         axios.get('http://localhost:8081/api/shelterUniqueId') // Update the URL with the correct port
-          .then(response => setShelterUniqueId(response.data.unique_id))
+          // .then(response => setShelterUniqueId(response.data.unique_id))
+          .then(response => setShelterUniqueId(response.data.shelter_id))
           .catch(error => console.error('Error fetching shelter unique_id:', error));
       }, []);
   
@@ -32,7 +34,7 @@ const Record = () => {
           label: 'Last Unique ID',
           backgroundColor: ['#3498db', '#e74c3c'],
           data: [userUniqueId, shelterUniqueId],
-          barThickness: 150,
+          barThickness: 50,
         },
       ],
     };
@@ -95,7 +97,7 @@ const Record = () => {
      <br></br>
      
      {userUniqueId !== null && shelterUniqueId !== null && (
-        <div>
+        <div style={{ width: '1000px', height: '800px', margin: '0 auto' }}>
           <Bar data={data} options={options} />
         </div>
       )}
@@ -145,7 +147,7 @@ const Record = () => {
         <div class="container">
             <div class="row g-5">
             <div class="col-md-6 text-center text-md-start">
-                    <center><p class="mb-md-0">&copy; <p class="text-white" href="#">Animal ResQ . All Rights Reserved.</p></p></center>
+                    <center><p class="mb-md-0">&copy; <p class="text-white" href="#">Paw Protectors . All Rights Reserved.</p></p></center>
                 </div>
              
             </div>
