@@ -8,7 +8,8 @@ import Ratings from './Components/Manage/Ratings'
 import Record from './Components/Manage/Record';
 import Emergencyrecord from './Components/Manage/Emergencyrecord';
 import Adminorders from './Components/Manage/AdminOrders';
-
+import Products from './Components/Manage/ProductManager';
+import AddProduct from './Components/Manage/AddProduct';
 
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import './App.css';
@@ -28,6 +29,8 @@ function App() {
           <Route path='/Record' element={<Record/>}></Route>
           <Route path='/Emergencyrecord' element={<Emergencyrecord/>}></Route>
           <Route path='/Adminorders' element={<Adminorders/>}></Route>
+          <Route path='/Products' element={<Products/>}></Route>
+          <Route path='/AddProduct' element={<AddProduct/>}></Route>
           </Routes>
           </Router>
     </div>

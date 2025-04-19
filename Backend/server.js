@@ -18,6 +18,12 @@ app.use("/public", express.static(path.join(__dirname, 'public')));
 const imageBasePath2 = "public/images";
 app.use("/public", express.static(path.join(__dirname, 'public')));
 
+const imageBasePath3 = "public/products";
+app.use("/public", express.static(path.join(__dirname, 'public')));
+// app.use("/public", express.static(path.join(__dirname, 'public/products')));
+// app.use('/products', express.static('public/products'));
+
+
 
 
 // Create a connection pool
@@ -81,13 +87,37 @@ const storage2 = multer.diskStorage({
   }
 })
 
+const uploadFilePath3 = path.resolve(__dirname, '', imageBasePath3);
+const storage3 = multer.diskStorage({
+  destination: uploadFilePath3,
+  filename : (req, file, cb) => {
+      cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
+  }
+})
+
+// this is for adding new product from admin side
+const uploadFile3 = multer({
+  storage: storage3,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter(req, file, callback) {
+    const extension = ['.png', '.jpg', '.jpeg', '.webp', '.avif'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
+    const mimeType  = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp', 'image/avif'].indexOf(file.mimetype) >= 0;
+    
+    if (extension && mimeType) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Invalid file type. Only picture file on type PNG and JPG are allowed!'));
+  },
+});
+
 // this is for creating adoption post
 const uploadFile2 = multer({
   storage: storage2,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter(req, file, callback) {
-    const extension = ['.png', '.jpg', '.jpeg', '.webp'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
-    const mimeType  = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'].indexOf(file.mimetype) >= 0;
+    const extension = ['.png', '.jpg', '.jpeg', '.webp', '.avif'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
+    const mimeType  = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp', 'image/avif'].indexOf(file.mimetype) >= 0;
     
     if (extension && mimeType) {
       return callback(null, true);
@@ -102,8 +132,8 @@ const uploadFile = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter(req, file, callback) {
-    const extension = ['.png', '.jpg', '.jpeg', '.webp'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
-    const mimeType  = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp'].indexOf(file.mimetype) >= 0;
+    const extension = ['.png', '.jpg', '.jpeg', '.webp', '.avif'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
+    const mimeType  = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp', 'image/avif'].indexOf(file.mimetype) >= 0;
     
     if (extension && mimeType) {
       return callback(null, true);
@@ -214,7 +244,7 @@ app.get('/Reportemergency',(req,res) =>{
   console.log(req.query.id);
   const sql = "SELECT * FROM animal.emergency_report;";
 
-db.query(sql, (err, data) => {
+  db.query(sql, (err, data) => {
     console.log(err);
     if(err) return res.json(err);
     return res.json(data);
@@ -564,28 +594,56 @@ app.post('/api/send-email', async (req, res) => {
   }
 });
 
-
+// api to store ratings
+// app.post('/ratings', (req, res) => {
+//   const { email,feedback } = req.body;
+//   // const getUserInfoSql = 'SELECT unique_id FROM registration_user WHERE email = ? ';
+//   const getUserInfoSql = 'SELECT user_id FROM registration_user WHERE email = ? ';
+//   db.query(getUserInfoSql, [email], (err, results) => {
+//     if (err) return res.json(err);
+//     if (results.length === 0) {
+//       return res.json('submitted successfully');
+//     }
+//     const user = results[0];
+//     // const logLastLoginSql = 'INSERT INTO ratings (unique_id, email, feedback) VALUES (?, ?, ?)';
+//     // db.query(logLastLoginSql, [user.unique_id, email,feedback], (logErr) => {
+//     const logLastLoginSql = 'INSERT INTO ratings (user_id, email, feedback) VALUES (?, ?, ?)';
+//     db.query(logLastLoginSql, [user.user_id, email,feedback], (logErr) => {
+//       if (logErr) {
+//         console.error('Error logging last login', logErr);
+//       }
+//       res.json("submitted successfully");
+//     });
+//   });
+// });
 app.post('/ratings', (req, res) => {
-  const { email,feedback } = req.body;
-  // const getUserInfoSql = 'SELECT unique_id FROM registration_user WHERE email = ? ';
-  const getUserInfoSql = 'SELECT user_id FROM registration_user WHERE email = ? ';
+  const { email, adoption, emergency, petstore, shelter } = req.body;
+
+  const getUserInfoSql = 'SELECT user_id FROM registration_user WHERE email = ?';
   db.query(getUserInfoSql, [email], (err, results) => {
     if (err) return res.json(err);
+
     if (results.length === 0) {
-      return res.json('submitted successfully');
+      return res.json('User not found');
     }
+
     const user = results[0];
-    // const logLastLoginSql = 'INSERT INTO ratings (unique_id, email, feedback) VALUES (?, ?, ?)';
-    // db.query(logLastLoginSql, [user.unique_id, email,feedback], (logErr) => {
-    const logLastLoginSql = 'INSERT INTO ratings (user_id, email, feedback) VALUES (?, ?, ?)';
-    db.query(logLastLoginSql, [user.user_id, email,feedback], (logErr) => {
+    const insertRatingSql = `
+      INSERT INTO ratings (user_id, email, adoption_rating, emergency_rating, petstore_rating, shelter_rating)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(insertRatingSql, [user.user_id, email, adoption, emergency, petstore, shelter], (logErr) => {
       if (logErr) {
-        console.error('Error logging last login', logErr);
+        console.error('Error saving ratings:', logErr);
+        return res.status(500).json("Server error");
       }
+
       res.json("submitted successfully");
     });
   });
 });
+
 
 app.get('/Ratings',(req,res) =>{
   console.log(req.query.id);
@@ -852,6 +910,8 @@ JOIN
   });
 });
 
+// accept emergency shelter
+// this worked correctly 
 app.post('/api/acceptRecord', (req, res) => {
   const acceptQuery = 'INSERT INTO accepted_emergency (address, contact, date, email, shelter_name, shelter_address, mobile_no) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
@@ -876,11 +936,93 @@ app.post('/api/acceptRecord', (req, res) => {
   });
 });
 
+// app.post('/api/acceptRecord', (req, res) => {
+//   const {
+//     address, contact, date, email,
+//     shelter_email, shelter_name, shelter_address, mobile_no
+//   } = req.body;
+
+//   const formattedDate = new Date(date).toISOString().split('T')[0];
+  
+//   console.log('address:', address);
+//   console.log('contact:', contact);
+//   console.log('date:', date);
+//   console.log('email:', email);
+//   console.log('shelter_name:', shelter_name);
+//   console.log('shelter_address:', shelter_address);
+//   console.log('mobile_no:', mobile_no);
+  
+//   if (!address || !contact || !formattedDate || !email || !shelter_email || !shelter_name || !shelter_address || !mobile_no) {
+//     return res.status(400).json({ success: false, message: 'All fields are required' });
+//   }
+  
+//   // Step 1: Get report_id and user_id from emergency_report
+//   // const fetchQuery = `SELECT report_id, user_id FROM emergency_report WHERE address = ? AND contact = ? AND date = ? AND email = ?`;
+//   const fetchQuery = `SELECT report_id, user_id FROM emergency_report WHERE email = ?`;
+  
+  
+//   db.query(fetchQuery, [address, contact, formattedDate, email], (fetchErr, results) => {
+//     if (fetchErr || results.length === 0) {
+//       console.error('Error fetching report:', fetchErr || 'No matching record found');
+//       return res.status(404).json({ success: false, message: 'Emergency report not found' });
+//     }
+    
+//     const { report_id, user_id } = results[0];
+//     console.log('report_id:', report_id);
+//     console.log('user_id:', user_id);
+    
+//     // Step 2: Get shelter_id from registration_shelter table using shelter_email
+//     const fetchShelterIdQuery = `SELECT shelter_id FROM registration_shelter WHERE email = ?`;
+    
+//     db.query(fetchShelterIdQuery, [shelter_email], (shelterErr, shelterResults) => {
+//       if (shelterErr || shelterResults.length === 0) {
+//         console.error('Error fetching shelter ID:', shelterErr || 'Shelter not found');
+//         return res.status(404).json({ success: false, message: 'Shelter not found' });
+//       }
+      
+//       const { shelter_id } = shelterResults[0];
+//       console.log('shelter_id:', shelter_id);
+
+//       // Step 3: Insert into accepted_emergency
+//       const acceptQuery = `
+//         INSERT INTO accepted_emergency 
+//         (report_id, user_id, shelter_id, address, contact, date, email, shelter_name, shelter_address, mobile_no) 
+//         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      
+
+//       db.query(acceptQuery, [
+//         report_id, user_id, shelter_id, address, contact, formattedDate, email, shelter_name, shelter_address, mobile_no
+//       ], (insertErr, insertResult) => {
+//         if (insertErr) {
+//           console.error('Error inserting accepted record:', insertErr);
+//           return res.status(500).json({ success: false, message: 'Failed to insert accepted record' });
+//         }
+
+//         // Step 4: Delete from emergency_report
+//         const deleteQuery = `DELETE FROM emergency_report WHERE report_id = ?`;
+
+//         db.query(deleteQuery, [report_id], (deleteErr, deleteResult) => {
+//           if (deleteErr) {
+//             console.error('Error deleting emergency report:', deleteErr);
+//             return res.status(500).json({ success: false, message: 'Accepted but failed to remove original report' });
+//           }
+
+//           res.json({ success: true, message: 'Emergency accepted and report removed successfully' });
+//         });
+//       });
+//     });
+//   });
+// });
+
+
+
+// to get accepted emergency record admin side
+
 app.get('/om',(req,res) =>{
   console.log(req.query.id);
   const sql = "SELECT * FROM animal.accepted_emergency";
 
-db.query(sql, (err, data) => {
+  db.query(sql, (err, data) => {
     console.log(err);
     if(err) return res.json(err);
     return res.json(data);
@@ -905,15 +1047,21 @@ app.get("/products", (req, res) => {
 });
 
 // API to place-order
-// this one worked properly
 // app.post("/place-order", (req, res) => {
-//   const { email, address, card_number, products } = req.body;
-
-//   if (!email || !address || !card_number || !products || products.length === 0) {
-//     return res.status(400).json({ error: "Missing order details" });
+//   const { email, address, card_number, expiry_date, cvv, payment_mode, products } = req.body;
+  
+//   console.log("Received body:", req.body);
+//   if (!email || !address || !payment_mode || !products || products.length === 0) {
+//     return res.status(400).json({ error: "Missing required order details" });
 //   }
 
-//   // ✅ Fetch user_id from user_activity
+//   // Card details required only for card-based payments
+//   if (payment_mode !== "Cash on Delivery") {
+//     if (!card_number || !expiry_date || !cvv) {
+//       return res.status(400).json({ error: "Card details are required for card payments" });
+//     }
+//   }
+
 //   db.query("SELECT user_id FROM user_activity WHERE email = ?", [email], (err, userResult) => {
 //     if (err) {
 //       console.error("Error fetching user:", err);
@@ -925,103 +1073,54 @@ app.get("/products", (req, res) => {
 //     }
 
 //     const user_id = userResult[0].user_id;
-//     const order_date = new Date().toISOString().slice(0, 19).replace("T", " "); // Format YYYY-MM-DD HH:MM:SS
-//     const status = "Pending"; // Default status
-//     const orderId = `ORD${Date.now()}`; // Unique order ID
-
-//     // ✅ Calculate total amount
-//     let totalAmount = 0;
-//     products.forEach((item) => {
-//       totalAmount += item.price * item.qty;
-//     });
-
-//     // ✅ Convert `products` array to JSON for storage
-//     const orderItems = JSON.stringify(products);
-
-//     // ✅ Insert **ONE ROW** per order (No duplicate `order_id` issue)
-//     const orderQuery = `
-//       INSERT INTO order_data (order_id, user_id, email, order_date, ship_address, status, order_items, total_amount, card_no)
-//       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-//     `;
-
-//     db.query(orderQuery, [orderId, user_id, email, order_date, address, status, orderItems, totalAmount, card_number], (err, result) => {
-//       if (err) {
-//         console.error("Error inserting order:", err);
-//         return res.status(500).json({ error: "Failed to place order" });
-//       }
-
-//       res.status(200).json({
-//         success: true,
-//         message: "Order placed successfully",
-//         order_id: orderId,
-//       });
-//     });
-//   });
-// });
-// this one you used last time before cash on delivery
-// app.post("/place-order", (req, res) => {
-//   const { email, address, card_number, products } = req.body;
-
-//   if (!email || !address || !card_number || !products || products.length === 0) {
-//     return res.status(400).json({ error: "Missing order details" });
-//   }
-
-//   // Fetch user_id from user_activity
-//   db.query("SELECT user_id FROM user_activity WHERE email = ?", [email], (err, userResult) => {
-//     if (err) {
-//       console.error("Error fetching user:", err);
-//       return res.status(500).json({ error: "Database error" });
-//     }
-
-//     if (!userResult || userResult.length === 0) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-
-//     const user_id = userResult[0].user_id;
-//     // const order_date = new Date().toISOString().slice(0, 19).replace("T", " "); // Format YYYY-MM-DD HH:MM:SS
 //     const order_date = new Date().toISOString().split('T')[0];
-//     const status = "Pending"; // Default status
-//     const orderId = `ORD${Date.now()}`; // Unique order ID
+//     const status = "Pending";
+//     const orderId = `ORD${Date.now()}`;
 
-//     // Calculate total amount & total number of products
 //     let totalAmount = 0;
 //     let totalProducts = 0;
 
 //     products.forEach((item) => {
-//       totalAmount += item.price * item.qty; // Total price
-//       totalProducts += item.qty; // Total number of items
+//       totalAmount += item.price * item.qty;
+//       totalProducts += item.qty;
 //     });
 
-//     // Insert **total number of products** in `order_items`
 //     const orderQuery = `
-//       INSERT INTO order_data (order_id, user_id, email, order_date, ship_address, status, order_items, total_amount, card_no)
-//       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+//       INSERT INTO order_data 
+//       (order_id, user_id, email, order_date, ship_address, status, order_items, total_amount, card_no, expiry_date, cvv, payment_mode)
+//       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 //     `;
 
-//     db.query(orderQuery, [orderId, user_id, email, order_date, address, status, totalProducts, totalAmount, card_number], (err, result) => {
+//     db.query(orderQuery, [
+//       orderId, user_id, email, order_date, address, status,
+//       totalProducts, totalAmount,
+//       payment_mode !== "Cash on Delivery" ? card_number : null,
+//       payment_mode !== "Cash on Delivery" ? expiry_date : null,
+//       payment_mode !== "Cash on Delivery" ? cvv : null,
+//       payment_mode
+//     ], (err, result) => {
 //       if (err) {
 //         console.error("Error inserting order:", err);
 //         return res.status(500).json({ error: "Failed to place order" });
 //       }
-
+//       console.log(result);
 //       res.status(200).json({
 //         success: true,
 //         message: "Order placed successfully",
 //         order_id: orderId,
-//         total_products: totalProducts, // Return total number of products
+//         total_products: totalProducts,
 //       });
 //     });
 //   });
 // });
 app.post("/place-order", (req, res) => {
   const { email, address, card_number, expiry_date, cvv, payment_mode, products } = req.body;
-  
+
   console.log("Received body:", req.body);
   if (!email || !address || !payment_mode || !products || products.length === 0) {
     return res.status(400).json({ error: "Missing required order details" });
   }
 
-  // Card details required only for card-based payments
   if (payment_mode !== "Cash on Delivery") {
     if (!card_number || !expiry_date || !cvv) {
       return res.status(400).json({ error: "Card details are required for card payments" });
@@ -1046,39 +1145,83 @@ app.post("/place-order", (req, res) => {
     let totalAmount = 0;
     let totalProducts = 0;
 
-    products.forEach((item) => {
-      totalAmount += item.price * item.qty;
-      totalProducts += item.qty;
-    });
-
-    const orderQuery = `
-      INSERT INTO order_data 
-      (order_id, user_id, email, order_date, ship_address, status, order_items, total_amount, card_no, expiry_date, cvv, payment_mode)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    db.query(orderQuery, [
-      orderId, user_id, email, order_date, address, status,
-      totalProducts, totalAmount,
-      payment_mode !== "Cash on Delivery" ? card_number : null,
-      payment_mode !== "Cash on Delivery" ? expiry_date : null,
-      payment_mode !== "Cash on Delivery" ? cvv : null,
-      payment_mode
-    ], (err, result) => {
-      if (err) {
-        console.error("Error inserting order:", err);
-        return res.status(500).json({ error: "Failed to place order" });
-      }
-      console.log(result);
-      res.status(200).json({
-        success: true,
-        message: "Order placed successfully",
-        order_id: orderId,
-        total_products: totalProducts,
+    // 1. Check stock availability for all products
+    const checkStockQueries = products.map(item => {
+      return new Promise((resolve, reject) => {
+        db.query("SELECT qty FROM product WHERE product_id = ?", [item.product_id], (err, result) => {
+          if (err) return reject(err);
+          if (result.length === 0) return reject(new Error(`Product ID ${item.product_id} not found.`));
+          const availableQty = result[0].qty;
+          if (availableQty < item.qty) {
+            return reject(new Error(`Only ${availableQty} items available for product ID ${item.product_id}`));
+          }
+          resolve();
+        });
       });
     });
+
+    Promise.all(checkStockQueries)
+      .then(() => {
+        // 2. Proceed with order calculation
+        products.forEach(item => {
+          totalAmount += item.price * item.qty;
+          totalProducts += item.qty;
+        });
+
+        const orderQuery = `
+          INSERT INTO order_data 
+          (order_id, user_id, email, order_date, ship_address, status, order_items, total_amount, card_no, expiry_date, cvv, payment_mode)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        db.query(orderQuery, [
+          orderId, user_id, email, order_date, address, status,
+          totalProducts, totalAmount,
+          payment_mode !== "Cash on Delivery" ? card_number : null,
+          payment_mode !== "Cash on Delivery" ? expiry_date : null,
+          payment_mode !== "Cash on Delivery" ? cvv : null,
+          payment_mode
+        ], (err, result) => {
+          if (err) {
+            console.error("Error inserting order:", err);
+            return res.status(500).json({ error: "Failed to place order" });
+          }
+
+          // 3. Update product quantities
+          const updateStockQueries = products.map(item => {
+            return new Promise((resolve, reject) => {
+              db.query("UPDATE product SET qty = qty - ? WHERE product_id = ?", [item.qty, item.product_id], (err) => {
+                if (err) return reject(err);
+                resolve();
+              });
+            });
+          });
+
+          Promise.all(updateStockQueries)
+            .then(() => {
+              res.status(200).json({
+                success: true,
+                message: "Order placed successfully",
+                order_id: orderId,
+                total_products: totalProducts,
+              });
+            })
+            .catch((err) => {
+              console.error("Error updating product stock:", err);
+              res.status(500).json({ error: "Failed to update product stock" });
+            });
+        });
+      })
+      .catch((err) => {
+        console.error("Stock check failed:", err.message);
+        res.status(400).json({ error: err.message });
+      });
   });
 });
+
+
+
+
 
 
 // get orders of the particular user
@@ -1137,71 +1280,6 @@ app.patch("/orders/:order_id", (req, res) => {
 
 
 // Chatbot API endpoint
-// app.post("/chatbot", (req, res) => {  
-//   res.json({ response: "Hello! How can I help?" });
-// });
-// app.post("/chatbot", (req, res) => {
-//   const { user_id, message } = req.body;
-//   if (!user_id || !message) {
-//       return res.status(400).json({ error: "User ID and message are required." });
-//   }
-
-//   const query = "SELECT response FROM chat WHERE message = ?";
-//   db.query(query, [message], (err, result) => {
-//       if (err) {
-//           console.error(err);
-//           return res.status(500).json({ error: "Database error." });
-//       }
-
-//       if (result.length === 0) {
-//           return res.json({ response: "Sorry, I don't understand that question." });
-//       }
-
-//       const response = result[0].response;
-      
-//       // Insert into chat_data
-//       const insertQuery = `INSERT INTO chat_data (user_id, interaction_date, message, response) VALUES (?, NOW(), ?, ?)`;
-//       db.query(insertQuery, [user_id, message, response], (insertErr) => {
-//           if (insertErr) {
-//               console.error(insertErr);
-//               return res.status(500).json({ error: "Failed to log chat data." });
-//           }
-//           res.json({ response });
-//       });
-//   });
-// });
-// app.post('/chatbot', async (req, res) => {
-//   const { message, user_id } = req.body;
-
-//   // Query the database to get the response based on the message
-//   db.query('SELECT response FROM chat WHERE message = ?', [message], (err, results) => {
-//       if (err) {
-//           console.error("Database query error:", err);
-//           return res.status(500).json({ response: "Sorry, there was an error processing your request." });
-//       }
-
-//       if (results.length > 0) {
-//           const response = results[0].response;
-
-//           // Log the chat data to the chat_data table
-//           const interactionDate = new Date().toISOString();
-//           db.query(
-//               'INSERT INTO chat_data (user_id, interaction_date, message, response) VALUES (?, ?, ?, ?)',
-//               [user_id, interactionDate, message, response],
-//               (err) => {
-//                   if (err) {
-//                       console.error("Error logging interaction:", err);
-//                   }
-//               }
-//           );
-
-//           // Send the response back to the frontend
-//           return res.json({ response });
-//       } else {
-//           return res.json({ response: "Sorry, I didn't understand that." });
-//       }
-//   });
-// });
 app.post('/chatbot', async (req, res) => {
   const { message, user_id } = req.body;
 
@@ -1342,6 +1420,111 @@ app.put('/update-shelter/:email', (req, res) => {
   );
 });
 
+// save image of new product
+app.post('/products',uploadFile3.single('image'),(req,res) => {
+  console.log(req);
+  console.log(req.file.filename);
+  //console.log(req.file);   
+  const image = req.file.filename;
+  return res.json(image);
+})
+
+// to add new product
+app.post('/addProduct', uploadFile3.single('image'), (req, res) => {
+  // const { id, name, category, description, price, qty } = req.body;
+  const { name, category, description, price, qty } = req.body;
+  const image = req.file?.filename;
+
+  // if (!id || !name || !category || !description || !price || !qty || !image) {
+  if ( !name || !category || !description || !price || !qty || !image) {
+    return res.status(400).json({ message: 'All fields including image are required' });
+  }
+
+  const imgPath = imageBasePath3 + "/" + image;
+
+  // const insertQuery = `
+  //   INSERT INTO product (product_id, name, category, description, price, qty, imageUrl)
+  //   VALUES (?, ?, ?, ?, ?, ?, ?)
+  // `;
+
+  const insertQuery = `
+    INSERT INTO product (name, category, description, price, qty, imageUrl)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  // db.query(insertQuery, [id, name, category, description, price, qty, imgPath], (err, result) => {
+  db.query(insertQuery, [name, category, description, price, qty, imgPath], (err, result) => {
+    if (err) {
+      console.error("Error adding product:", err);
+      return res.status(500).json({ message: "Something went wrong while adding product" });
+    }
+
+    res.status(200).json({ message: "Product added successfully", product_id: result.insertId });
+  });
+});
+
+// update price or quantity
+app.put('/products/:id', (req, res) => {
+  const { id } = req.params;
+  const { price, qty } = req.body;
+
+  const fieldsToUpdate = [];
+  const values = [];
+
+  if (price !== undefined) {
+    fieldsToUpdate.push('price = ?');
+    values.push(price);
+  }
+
+  if (qty !== undefined) {
+    fieldsToUpdate.push('qty = ?');
+    values.push(qty);
+  }
+
+  if (fieldsToUpdate.length === 0) {
+    return res.status(400).json({ message: 'No valid fields provided for update.' });
+  }
+
+  const updateQuery = `
+    UPDATE product
+    SET ${fieldsToUpdate.join(', ')}
+    WHERE product_id = ?
+  `;
+  values.push(id);
+
+  db.query(updateQuery, values, (err, result) => {
+    if (err) {
+      console.error('Error updating product:', err);
+      return res.status(500).json({ message: 'Something went wrong while updating product' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.status(200).json({ message: 'Product updated successfully' });
+  });
+});
+
+// Delete a product by ID
+app.delete('/products/:id', (req, res) => {
+  const { id } = req.params;
+
+  const deleteQuery = `DELETE FROM product WHERE product_id = ?`;
+
+  db.query(deleteQuery, [id], (err, result) => {
+    if (err) {
+      console.error('Error deleting product:', err);
+      return res.status(500).json({ message: 'Something went wrong while deleting the product' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.status(200).json({ message: 'Product deleted successfully' });
+  });
+});
 
 
 

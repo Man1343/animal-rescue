@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./OrderPage.css";
 import { MdLogout } from "react-icons/md";
@@ -12,12 +12,20 @@ export default function OrderPage() {
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   // const userEmail = localStorage.getItem("userEmail");
   
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("userEmail");
+    if (storedEmail) {
+      setOrderDetails((prev) => ({ ...prev, email: storedEmail }));
+    }
+  }, []);
+
   const [cart, setCart] = useState(location.state?.cart || []);
   const [orderDetails, setOrderDetails] = useState({
     email: "",
     address: "",
     cardNumber: "",
     expiryDate: "",
+    cvv: "",
   });
 
   const updateQuantity = (productId, change) => {
@@ -89,27 +97,50 @@ export default function OrderPage() {
     };
     
     
-    try {
-      const response = await fetch("http://localhost:8081/place-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      });
+  //   try {
+  //     const response = await fetch("http://localhost:8081/place-order", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(orderData),
+  //     });
       
-      if (response.ok) {
-        alert("Order placed successfully!");
-        setCart([]); 
-        // navigate(`/orders/${orderDetails.email}`);  // Redirect after placing order
-        // navigate(`/orders/${userEmail}`);
-        navigate(`/Userorders`);
-        // navigate(`/Petstore`);
-      } else {
-        alert("Failed to place order. Try again.");
-      }
-    } catch (error) {
-      console.error("Error placing order:", error);
+  //     if (response.ok) {
+  //       alert("Order placed successfully!");
+  //       setCart([]); 
+  //       // navigate(`/orders/${orderDetails.email}`);  // Redirect after placing order
+  //       // navigate(`/orders/${userEmail}`);
+  //       navigate(`/Userorders`);
+  //       // navigate(`/Petstore`);
+  //     } else {
+  //       alert("Failed to place order. Try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error placing order:", error);
+  //   }
+  // };
+
+  try {
+    const response = await fetch("http://localhost:8081/place-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData),
+    });
+  
+    const data = await response.json(); // <- Parse the response JSON regardless of status
+  
+    if (response.ok) {
+      alert("Order placed successfully!");
+      setCart([]);
+      navigate(`/Userorders`);
+    } else {
+      alert("Order failed: " + data.error); // <- Show backend error like "Only 2 items available"
     }
-  };
+  } catch (error) {
+    console.error("Error placing order:", error);
+    alert("Something went wrong. Please try again."); // Network/server errors
+  }
+}
+
 
   const handleChange = (event) => {
 		setValues({ ...values, [event.target.name]:[event.target.value] });
@@ -211,7 +242,7 @@ export default function OrderPage() {
           type="email"
           placeholder="Registered Email"
           value={orderDetails.email}
-          onChange={(e) => setOrderDetails({ ...orderDetails, email: e.target.value })}
+          onChange={(e) => setOrderDetails({ ...orderDetails, email: e.target.value })} readOnly
         />
         
         <label>Address for delivery:</label>
@@ -264,8 +295,14 @@ export default function OrderPage() {
           </>
         )}
 
-
         <button className="place-order-btn" onClick={handleOrder}>Place Order</button>
+        {/* <button 
+        className="place-order-btn" 
+        onClick={(e) => {
+          e.preventDefault();
+          handleOrder();}}>
+            Place Order
+        </button> */}
       </div>
 
       <div class="container-fluid bg-light mt-5 py-5">

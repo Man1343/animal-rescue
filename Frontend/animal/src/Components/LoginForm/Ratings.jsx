@@ -1,23 +1,45 @@
-import React, {useState} from 'react'
-
+import React, {useState, useEffect} from 'react'
+import ReactStars from "react-rating-stars-component";
+// import { FaStar } from 'react-icons/fa'
 import { Link,useNavigate } from 'react-router-dom'
 import { MdLogout } from "react-icons/md";
 import Constant from '../../Constant';
 import axios from 'axios';
 
 const Ratings = () => {
+    // const [values, setValues] = useState({
+    //     email: '',
+    //     feedback: ''
+        
+    // })
+   
     const [values, setValues] = useState({
         email: '',
-        feedback: ''
-        
-    })
-   
+        adoption: 0,
+        emergency: 0,
+        petstore: 0,
+        shelter: 0,
+      });
+      
+    //   const handleStarChange = (event) => {
+    //     const { name, value } = event.target;
+    //     setValues(prev => ({ ...prev, [name]: parseInt(value) }));
+    //   };
+      
   
     const navigate = useNavigate();
 
-    const handleInput = (event) => {
-        setValues (prev => ({...prev,[event.target.name]:[event.target.value]}))
-    }
+    useEffect(() => {
+        const storedEmail = localStorage.getItem("userEmail");
+        if (storedEmail) {
+          setValues((prev) => ({ ...prev, email: storedEmail }));
+        }
+      }, []);
+
+    // const handleInput = (event) => {
+    //     setValues (prev => ({...prev,[event.target.name]: event.target.value}))
+    // }
+
     const handleChange = (event) => {
         const selectedOption = event.target.value;
         // Redirect based on the selected option
@@ -103,25 +125,73 @@ const Ratings = () => {
     </nav>
        <div className='bgg'>
            <div class="emergency">
-                 <p class="title">Feedback to Shelter</p>
+            <p class="title">Ratings</p>
+            <form class="form" onSubmit={handleSubmit}>
+                <div class="input-groupp">
+                    {/* <input type="email" placeholder="Email" name='email' onChange={handleInput} required />    */}
+                    <input type="email" placeholder="Email" name='email' value={values.email} readOnly />
+                </div>
 
-	              <form class="form" onSubmit={handleSubmit}>
-                  <div class="input-groupp">
-			      <input type="email" placeholder="Email" name='email' onChange={handleInput}/>   
-			      </div>
+                {/* Adoption */}
+                <div className="input-groupp">
+                <label>Adoption Rating:</label><br />
+                <ReactStars
+                    count={5}
+                    value={Number(values.adoption)}
+                    onChange={(newValue) =>
+                    setValues(prev => ({ ...prev, adoption: newValue }))
+                    }
+                    size={30}
+                    activeColor="#ffd700"
+                />
+                </div>
 
-            <div class="input-groupp">
-			      <textarea class="om" placeholder="Feedback" name='feedback' onChange={handleInput}/>   
-			      </div>
+                {/* Emergency */}
+                <div className="input-groupp">
+                <label>Emergency Rating:</label><br />
+                <ReactStars
+                    count={5}
+                    value={Number(values.emergency)}
+                    onChange={(newValue) =>
+                    setValues(prev => ({ ...prev, emergency: newValue }))
+                    }
+                    size={30}
+                    activeColor="#ffd700"
+                />
+                </div>
 
-             
+                {/* Petstore */}
+                <div className="input-groupp">
+                <label>Petstore Rating:</label><br />
+                <ReactStars
+                    count={5}
+                    value={Number(values.petstore)}
+                    onChange={(newValue) =>
+                    setValues(prev => ({ ...prev, petstore: newValue }))
+                    }
+                    size={30}
+                    activeColor="#ffd700"
+                />
+                </div>
 
-          
-                 
+                {/* Shelter */}
+                <div className="input-groupp">
+                <label>Shelter Rating:</label><br />
+                <ReactStars
+                    count={5}
+                    value={Number(values.shelter)}
+                    onChange={(newValue) =>
+                    setValues(prev => ({ ...prev, shelter: newValue }))
+                    }
+                    size={30}
+                    activeColor="#ffd700"
+                />
+                </div>
 
-        <button type='submit' class="signn">Submit</button>
-	    </form>
-    </div>
+                <button type='submit' class="signn">Submit</button>
+                </form>
+
+        </div>
     </div>
         <div>
         <div class="container-fluid bg-light mt-5 py-5">

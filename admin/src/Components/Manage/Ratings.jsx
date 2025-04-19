@@ -6,6 +6,7 @@ import { MdLogout } from "react-icons/md";
 import axios from 'axios';
 import Constant from '../../Constant';
 import Modal from './Modal2';
+import ReactStars from 'react-rating-stars-component';
 
 
 const Viewratings = () => {
@@ -65,7 +66,7 @@ const Viewratings = () => {
             <Link to ='/Adoption' class="nav-item nav-link">Manage Adoption</Link>
             <Link to ='/Ratings' class="nav-item nav-link">Manage Ratings</Link>
             <Link to ='/Adminorders' className='nav-item nav-link'>Manage Orders</Link>
-
+            <Link to ='/Products' className='nav-item nav-link'>Manage Products</Link>
         </div>
             <Link to ='/' class="nav-item nav-link"><MdLogout className='ommm'/></Link>
         </div>
@@ -73,12 +74,12 @@ const Viewratings = () => {
       </div>
       <div className='emerr'>
     <center>
-        <table style={{color:"black"}} border={'3px'} width={'80%'}>
+        <table style={{color:"black"}} border={'3px'} width={'95%'}>
         <tr style={rowStyle}>
             <th className='emerr'>Rating_ID</th>
             <th className='emerr'>User_ID</th>
             <th className='emerr'>Email</th>
-            <th className='emerr'>Feedback</th>
+            <th className='emerr' colSpan={4}>Feedback</th>
             <th className='emerr'>Manage</th>
         </tr>
         {
@@ -94,19 +95,59 @@ const Viewratings = () => {
                     <td className='emerr'>
                      {user.email}
                     </td>
-                    <td className='emerr'>
+                    {/* <td className='emerr'>
                      {user.feedback}
+                    </td> */}
+                    <td className="emer">
+                    Adoption
+                    <ReactStars
+                        count={5}
+                        value={Number(user.adoption_rating)}  
+                        size={24}
+                        activeColor="#ffd700"
+                        edit={false}  
+                    />
+                    </td>
+                    <td className="emer">
+                    Emergency
+                    <ReactStars
+                        count={5}
+                        value={Number(user.emergency_rating)}  
+                        size={24}
+                        activeColor="#ffd700"
+                        edit={false}  
+                    />
+                    </td>
+                    <td className="emer">
+                    Petstore
+                    <ReactStars
+                        count={5}
+                        value={Number(user.petstore_rating)}  
+                        size={24}
+                        activeColor="#ffd700"
+                        edit={false}  
+                    />
+                    </td>
+                    <td className="emer">
+                    Shelter
+                    <ReactStars
+                        count={5}
+                        value={Number(user.shelter_rating)}  
+                        size={24}
+                        activeColor="#ffd700"
+                        edit={false}  
+                    />
                     </td>
                     <td key = {user.id}>
-                                <button
-  className="btn btn-outline-danger"
-  onClick={() => {
-    handleDelete(user.id);
-    setModalOpen(true);
-  }}
->
-  Delete
-</button>    
+                        <button
+                            className="btn btn-outline-danger"
+                            onClick={() => {
+                                handleDelete(user.id);
+                                setModalOpen(true);
+                            }}
+                            >
+                            Delete
+                            </button>    
                         </td>
                 </tr>
                 

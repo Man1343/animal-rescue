@@ -6,7 +6,12 @@ const predefinedQuestions = [
     "How can I adopt an animal?",
     "What are your rescue policies?",
     "How can I donate?",
-    "Do you offer volunteer opportunities?"
+    "Do you offer volunteer opportunities?",
+    "How do I report an injured or stray animal?",
+    "Are the animal up for adoption vaccinated?",
+    "Do you sell pet products online?",
+    "Can I return a product I purchased?",
+    "What are your working hours?"
 ];
 
 const Chatbot = () => {
@@ -81,7 +86,7 @@ const Chatbot = () => {
                     border: "1px solid #ddd"
                 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                        <h3 style={{ color: "#007bff", margin: 0 }}>Chatbot</h3>
+                        <h3 style={{ color: "#007bff", margin: 0 }}>FAQs</h3>
                         <button onClick={() => setIsOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "16px" }}>✖</button>
                     </div>
                     <div style={{ height: "220px", overflowY: "auto", marginBottom: "10px", padding: "10px", background: "#f9f9f9", borderRadius: "8px" }}>
@@ -100,9 +105,14 @@ const Chatbot = () => {
                             </div>
                         ))}
                     </div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "10px", justifyContent: "center" }}>
+                    {/* <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "10px", justifyContent: "center" }}> */}
+                    {/* horizontal scroll */}
+                    {/* <div style={{ display: "flex", overflowX: "auto", gap: "8px", marginBottom: "10px", paddingBottom: "5px", scrollbarWidth: "thin", maxWidth: "100%" }}> */}
+                    {/* vertical scroll */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "10px", maxHeight: "140px", overflowY: "auto", paddingRight: "5px", scrollbarWidth: "thin" }}>
                         {predefinedQuestions.map((question, index) => (
-                            <button key={index} onClick={() => sendMessage(question)} style={{ 
+                            <button key={index} onClick={() => sendMessage(question)} style={{
+                                minWidth: "140px", 
                                 padding: "6px 10px", 
                                 backgroundColor: "#f0f0f0", 
                                 border: "1px solid #ccc", 
@@ -110,7 +120,8 @@ const Chatbot = () => {
                                 borderRadius: "20px", 
                                 fontSize: "12px", 
                                 transition: "0.3s", 
-                                whiteSpace: "nowrap"
+                                whiteSpace: "nowrap",
+                                flex: "0 0 auto"
                             }}
                             onMouseOver={(e) => e.target.style.backgroundColor = "#e0e0e0"}
                             onMouseOut={(e) => e.target.style.backgroundColor = "#f0f0f0"}
@@ -119,7 +130,7 @@ const Chatbot = () => {
                             </button>
                         ))}
                     </div>
-                    <div style={{ display: "flex" }}>
+                    {/* <div style={{ display: "flex" }}>
                         <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Type a message..." style={{ 
                             width: "75%", 
                             padding: "8px", 
@@ -143,7 +154,7 @@ const Chatbot = () => {
                         >
                             Send
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             )}
         </div>

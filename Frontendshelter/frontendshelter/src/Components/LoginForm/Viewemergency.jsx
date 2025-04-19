@@ -123,7 +123,7 @@ const Viewemergency = () => {
             <th className='emer'>Image</th>
             <th className='emer'>Email</th>
             <th className='emer'>Date</th>
-            <th className='emer'>Accept/Reject</th>
+            <th className='emer'>Accept</th>
         </tr>
         {
         mydata.map((data)=>{

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./AdminOrders.css";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 import {Link} from 'react-router-dom'
 import { MdLogout } from "react-icons/md";
@@ -8,6 +10,68 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [emailFilter, setEmailFilter] = useState("");
+  const [filteredOrders, setFilteredOrders] = useState([]);
+
+  // const downloadPDF = () => {
+  //   const doc = new jsPDF();
+  //   doc.text("Filtered Orders Report", 14, 15);
+  
+  //   const tableColumn = ["Order ID", "Email", "Date", "Items", "Amount", "Status"];
+  //   const tableRows = [];
+  
+  //   (filteredOrders.length > 0 ? filteredOrders : orders).forEach(order => {
+  //     const orderData = [
+  //       order.order_id,
+  //       order.email,
+  //       new Date(order.order_date).toISOString().split("T")[0],
+  //       order.order_items,
+  //       `₹${order.total_amount}`,
+  //       order.status
+  //     ];
+  //     tableRows.push(orderData);
+  //   });
+  
+  //   doc.autoTable({
+  //     head: [tableColumn],
+  //     body: tableRows,
+  //     startY: 20,
+  //   });
+  
+  //   doc.save("filtered_orders.pdf");
+  // };
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Filtered Orders Report", 14, 15);
+  
+    const tableColumn = ["Order ID", "Email", "Date", "Items", "Amount", "Status"];
+    const tableRows = [];
+  
+    (filteredOrders.length > 0 ? filteredOrders : orders).forEach(order => {
+      const orderData = [
+        order.order_id,
+        order.email,
+        new Date(order.order_date).toISOString().split("T")[0],
+        order.order_items,
+        `₹${order.total_amount}`,
+        order.status
+      ];
+      tableRows.push(orderData);
+    });
+  
+    // Correct way to call autoTable
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+  
+    doc.save("filtered_orders.pdf");
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -45,6 +109,25 @@ export default function AdminOrders() {
 
   const statusOptions = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
 
+  const applyFilters = () => {
+    let filtered = orders;
+  
+    if (fromDate) {
+      filtered = filtered.filter(order => new Date(order.order_date) >= new Date(fromDate));
+    }
+    if (toDate) {
+      filtered = filtered.filter(order => new Date(order.order_date) <= new Date(toDate));
+    }
+    if (statusFilter) {
+      filtered = filtered.filter(order => order.status === statusFilter);
+    }
+    if (emailFilter) {
+      filtered = filtered.filter(order => order.email.includes(emailFilter));
+    }
+  
+    setFilteredOrders(filtered);
+  };
+  
   return (
 
     <div>
@@ -74,6 +157,7 @@ export default function AdminOrders() {
             <Link to ='/Adoption' class="nav-item nav-link">Manage Adoption</Link>
             <Link to ='/Ratings' class="nav-item nav-link">Manage Ratings</Link>
             <Link to ='/Adminorders' className='nav-item nav-link'>Manage Orders</Link>
+            <Link to ='/Products' className='nav-item nav-link'>Manage Products</Link>
         </div>
         <Link to ='/' class="nav-item nav-link"><MdLogout className='ommm'/></Link>
     </div>
@@ -99,7 +183,8 @@ export default function AdminOrders() {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => (
+            {/* {orders.map((order) => ( */}
+            {(filteredOrders.length > 0 ? filteredOrders : orders).map((order) => (
               <tr key={order.order_id}>
                 <td>{order.order_id}</td>
                 <td>{order.email}</td>
@@ -130,6 +215,49 @@ export default function AdminOrders() {
         </table>
       )}
     </div>
+    {/* <div className="filters">
+      <label>From: <input type="date" onChange={(e) => setFromDate(e.target.value)} /></label>
+      <label>To: <input type="date" onChange={(e) => setToDate(e.target.value)} /></label>
+      <label>Status: 
+        <select onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="">All</option>
+          {statusOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+        </select>
+      </label>
+      <label>Email: <input type="text" onChange={(e) => setEmailFilter(e.target.value)} /></label>
+      <button onClick={applyFilters}>Generate Report</button>
+    </div> */}
+    <div className="filters container mt-4 p-4 border rounded bg-white shadow-sm">
+      <div className="row g-3">
+        <div className="col-md-3">
+          <label className="form-label">From</label>
+          <input type="date" className="form-control" onChange={(e) => setFromDate(e.target.value)} />
+        </div>
+        <div className="col-md-3">
+          <label className="form-label">To</label>
+          <input type="date" className="form-control" onChange={(e) => setToDate(e.target.value)} />
+        </div>
+        <div className="col-md-3">
+          <label className="form-label">Status</label>
+          <select className="form-select" onChange={(e) => setStatusFilter(e.target.value)}>
+            <option value="">All</option>
+            {statusOptions.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </div>
+        <div className="col-md-3">
+          <label className="form-label">Email</label>
+          <input type="text" className="form-control" placeholder="Search by email" onChange={(e) => setEmailFilter(e.target.value)} />
+        </div>
+        <div className="col-12 text-end mt-3">
+          <button className="btn btn-primary me-2" onClick={applyFilters}>Generate Report</button>
+          <button className="btn btn-success" onClick={downloadPDF}>Download PDF</button>
+        </div>
+      </div>
+    </div>
+
+
     <div class="container-fluid bg-light mt-5 py-5">
         <div class="container pt-5">
             <div class="row g-5">
